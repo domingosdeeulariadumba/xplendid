@@ -238,50 +238,52 @@ with st.expander('Analyse your results ↴'):
     ## Results button
     exp_results, _, _ = st.columns([.3, 1.5, 1.5])    
     
-    # Tasks if option to get results is triggered
+    ## Tasks if option to get results is triggered
     if exp_results.button('▷', help = 'Get results!'):  
         st.session_state.exp_results_button = True
-
+        
     ## Keeping the session open
     if st.session_state.exp_results_button:  
         success = True
         try:
             ## Compute design inputs
             ab_experiment_xp = ABTesting(bcr_xp, mde_xp, alpha = alpha_xp, 
-                                        power = power_xp, is_absolute_variation = is_absolute_variation_xp,
-                                        is_two_tailed = is_two_tailed_xp)           
-        except Exception as e:
+                                            power = power_xp, is_absolute_variation = is_absolute_variation_xp,
+                                           is_two_tailed = is_two_tailed_xp
+                                           )           
+        except:
             st.toast(inputs_sp)
-            st.write(f"Error in computing design inputs: {e}")
             success = False
-
-        ## A spinner for processing the plot display       
+        
+        ## A spinner for procesing the plot display       
         with st.spinner('Processing...'):
             time.sleep(1)        
-
+                
         # Trying to show results after computing design parameters
         if success:            
             try:
                 ## Computing results for plotting 
                 fig = ab_experiment_xp.get_experiment_results(
-                    n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, plot_ = plot_xp)
+                    n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, plot_ = plot_xp
+                    )
                 
                 ## Computing recommendations
                 results_summary = ab_experiment_xp.get_experiment_results(
-                    n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, plot_ = None)
+                                n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, plot_ = None
+                                )
                 
                 # Toast for notifying 0 as input of conversions
                 if 0 in [p_ctrl_xp, p_trmt_xp]:
                     st.toast(zero_conv_hint)
                     
-                ## Dotted divider and spinner for processing the plot display 
+                ## Dotted divider and spinner for procesing the plot display 
                 st.write('')
                 st.markdown(xplendid_div_body, unsafe_allow_html = True)
                 
                 ## Plotting results
                 st.plotly_chart(fig, config = {'displayModeBar': False})
                 
-                ## Download and view recommendation buttons
+                ## Download and and view recommendation buttons
                 _, download_col, sum_col, _ = st.columns([4, 1.5, 1.5, 4])
                 
                 ## Making the plot downloadable
@@ -302,16 +304,15 @@ with st.expander('Analyse your results ↴'):
                         results_summary[0], 
                         stream_words_xp(results_summary[1], results_summary[2])
                         )
-                    
+                
                     ## Close recommendation button 
                     _, _, close_col, _ = st.columns([4, 4, .3, .2])
                     if close_col.button('↖'):
-                        st.rerun()
-            except Exception as e:
-                st.write(f"Error in showing results: {e}")
+                                 st.rerun()
+            except:
                 st.write(plot_error_hint)
         else:
-            st.write("Failed to compute design inputs.")
+            pass
     
 
     
