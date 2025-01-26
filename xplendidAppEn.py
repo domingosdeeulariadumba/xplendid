@@ -317,7 +317,7 @@ with st.expander('Analyse your results ↴'):
 
     
 # Feedback section
-_, _, fb_col = st.columns([1.5, 1.5, 1.8])
+_, _, fb_col = st.columns([1.5, 1.5, 1.5])
 with fb_col.container():
     for _ in range(4):
         st.write('')
