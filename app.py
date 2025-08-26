@@ -1,8 +1,9 @@
 # Dependencies
 import streamlit as st
-from xplendidLab import ABTesting
-from xplendidFuncs import stream_words_sp, create_plot, \
-print_summary_xp, stream_words_xp
+from ablisk import ABLisk
+from utils.data import stream_design_recommendation, create_plot, \
+    stream_experiment_recommendations, print_experiment_summary
+from utils.ai import ask_xplendid
 import time
 import joblib as jbl
 
@@ -10,7 +11,9 @@ import joblib as jbl
 # Title, icon, and layout
 pictograph = 'https://i.postimg.cc/y6DbW1FL/xplendid-pictograph.png'
 st.set_page_config(
-    page_title = 'xplendid', page_icon = pictograph, layout = 'centered',
+    page_title = 'xplendid', 
+    page_icon = pictograph, 
+    layout = 'centered',
     initial_sidebar_state = 'collapsed'
 ) 
 
@@ -19,29 +22,35 @@ st.markdown(
     '''
     <style>
         .stApp {
-            background: #E1EBEE; /*Blue grey*/
+            background: #E1EBEE;
         }
     </style>
 ''',
     unsafe_allow_html = True
 )
 
+# Clearing the portuguese page session
+if 'pt_initialized' in st.session_state:
+    st.session_state['chat_history'] = []
+    del st.session_state['pt_initialized']
+    
 # Language icon
 _, _, lang_col = st.columns([4, 4, .8])
 lang_col.page_link('pages/pt.py', label = '', icon = '🇵🇹')
 st.write('')
 
 # xplendid logo
-st.image('https://i.postimg.cc/cCJg1kKz/xplendid-logo-body.png')
+logo = 'https://i.postimg.cc/cCJg1kKz/xplendid-logo-body.png'
+st.markdown(f"<img src = '{logo}'>", unsafe_allow_html = True)
 
 # Left divider before body
 left_bar = 'https://i.postimg.cc/QMZnYCdf/left-bar-body.png'
-st.image(left_bar)
+st.markdown(f"<img src = {left_bar}>", unsafe_allow_html = True)
 
 # Welcome and overview
 st.markdown('''
         <div style='text-align: justify;'>
-         Welcome to <strong><em>xplendid</em></strong> — your go-to platform for seamless experiment analysis and data-driven decision-making. Whether you're optimizing your website, refining product features, or improving marketing campaigns, <strong><em>xplendid</em></strong> empowers you with cutting-edge tools to ensure your experiments deliver actionable insights.
+         Welcome to <strong><em>xplendid</em></strong> — your go-to platform for seamless A/B testing and data-driven decision-making. Whether you're optimizing your website, refining product features, or improving marketing campaigns, <strong><em>xplendid</em></strong> empowers you with cutting-edge tools to ensure your experiments deliver actionable insights.
          </div>
 ''', 
 unsafe_allow_html = True
@@ -51,13 +60,13 @@ unsafe_allow_html = True
 xplendid_bold_italic = "<span style = 'color: #ff66c4;'><strong><em>xplendid</strong></em></span>"
 
 # More info about xplendid
-if st.button('👁'):
+if st.button('↘'):
     st.markdown(
         f'''
         <div style='text-align: justify;'>
         <strong>What Makes this Tool Exceptional?</strong>
         
-        - <em><strong>Effortless Experimentation: {xplendid_bold_italic}</strong> simplifies the complexities of analyzing experiments with tools that are accurate, intuitive, and built for speed. Calculate sample sizes, compare results, and uncover insights without missing a beat.</em>
+        - <em><strong>Effortless Experimentation: {xplendid_bold_italic}</strong> simplifies the complexities of analyzing A/B tests with tools that are accurate, intuitive, and built for speed. Calculate sample sizes, compare results, and uncover insights without missing a beat.</em>
  
         - <em><strong>Insightful Visualizations:</em></strong> dive deep into your data with dynamic charts and graphs that tell the full story. From confidence intervals to clear comparisons, {xplendid_bold_italic} transforms numbers into visuals that drive action.</em>
         
@@ -71,22 +80,23 @@ if st.button('👁'):
         unsafe_allow_html = True
         )
     _, _, less = st.columns([3, 3, .3])
-    if less.button('━'):
+    if less.button('↖'):
         st.rerun()
 
 # A call-to-action for exploring xplendid
 st.write(' ') 
-st.write('Let **_xplendid_** be the key to your data-driven success. Start exploring, analyzing, and achieving today! 🚀')
+st.write('Start exploring, analyzing, and achieving today! 🚀')
 
 # Right divider before body
 right_bar = 'https://i.postimg.cc/QdTyq1hB/right-bar-body.png'
-st.image(right_bar)
+st.markdown(f"<img src = {right_bar}>", unsafe_allow_html = True)
 for _ in range(3):
     st.write('')
 
 # Design Icon
-design_icon = 'https://i.postimg.cc/3JmKkyVB/design-icon.png'
-st.image(design_icon)
+design_icon = 'https://i.postimg.cc/65qpmcFk/design-icon.png'
+st.markdown(f"<img src = {design_icon}>", unsafe_allow_html = True)
+st.write('')
 
 # Outputs divider
 xplendid_div_body = '''
@@ -116,24 +126,32 @@ with st.expander('Design your experiment ↴'):
         st.write('\n')
     left_sp, _, right_sp = st.columns([1.5, .5, 1.5])
     with left_sp.container():
-        bcr_sp = st.number_input('Baseline Conversion Rate (%)', help = 'Spans from 0 to 100.')
+        bcr_sp = st.number_input(
+            'Baseline Conversion Rate (%)', 
+            help = 'Spans from 0 to 100.', 
+            key = 'bcr_sp'
+            )
         
         st.write('\n')
-        mde_sp = st.number_input('Minimum Detectable Effect (%)', help = 'Must be positive.')
+        mde_sp = st.number_input(
+            'Minimum Detectable Effect (%)',
+            help = 'Must be positive.',
+            key = 'mde_sp'
+            )
         st.write('\n')
-        is_absolute_variation_sp = st.toggle('Absolute Variation', True)
+        is_absolute_variation_sp = st.toggle('Absolute Variation', True, key = 'var_sp')
     
     with right_sp.container():
-        alpha_sp = st.slider('Significance Level (%)', 1, 10, 5)
-        power_sp = st.slider('Power (%)', 80, 99)
-        is_two_tailed_sp = st.toggle('Two-Tailed Test', True)
+        alpha_sp = st.slider('Significance Level (%)', 1, 10, 5, key = 'alpha_sp')
+        power_sp = st.slider('Power (%)', 80, 99, key = 'power_sp')
+        is_two_tailed_sp = st.toggle('Two-Tailed Test', True, key = 'tail_sp')
         st.write('\n\n')
     _, sample_size, _ = st.columns(3)
 
     # Computing the user inputs
     try:    
         if sample_size.button('Calculate sample size'):
-            ab_exp_sp = ABTesting(bcr_sp, mde_sp, alpha = alpha_sp, 
+            ab_exp_sp = ABLisk(bcr_sp, mde_sp, alpha = alpha_sp, 
                                             power = power_sp, is_absolute_variation = is_absolute_variation_sp,
                                            is_two_tailed = is_two_tailed_sp)
             min_sample_size = ab_exp_sp.evan_miller_sample_size()
@@ -146,8 +164,17 @@ with st.expander('Design your experiment ↴'):
                 message_sp = message_sp_1 + message_sp_2 + message_sp_3
                 st.write('')
                 st.write_stream(
-                    stream_words_sp(xplendid_div_body, message_sp)
+                    stream_design_recommendation(
+                        xplendid_div_body, 
+                        message_sp
+                        )
                     )
+                
+                # Saving values from the session state
+                st.session_state.update({
+                    'min_sample_size': min_sample_size,
+                    'message_sp': message_sp
+                            })
             else:
                 st.toast(inputs_sp)                
     except:
@@ -158,8 +185,9 @@ with st.expander('Design your experiment ↴'):
 # Experiment results icon
 for _ in range(2):
     st.write('')
-analysis_icon = 'https://i.postimg.cc/7h1Wkytg/analysis-icon.png'
-st.image(analysis_icon)
+analysis_icon = 'https://i.postimg.cc/4yLN3HH2/analysis-icon.png'
+st.markdown(f"<img src = {analysis_icon}>", unsafe_allow_html = True)
+st.write('')
 
 
 # Experiment results expander
@@ -183,8 +211,8 @@ with st.expander('Analyse your results ↴'):
         st.write('\n')
         is_absolute_variation_xp = st.toggle(
             'Absolute Variation', True, key = 'var_xp'
-            )    
-    
+            )   
+
     ## Right container
     with right_xp_sp.container():
         alpha_xp = st.slider(
@@ -204,10 +232,10 @@ with st.expander('Analyse your results ↴'):
         st.markdown(
             xplendid_bold_italic.replace('xplendid', 'Control'), 
             unsafe_allow_html = True)
-        n_ctrl_xp = st.number_input(
+        n_ctrl = st.number_input(
             '_Sample Size_', 0, key = 'nctrl', help = 'Must be positive integer.'
             )
-        p_ctrl_xp = st.number_input(
+        p_ctrl = st.number_input(
             '_Conversions_', key = 'pctrl', help = 'Spans from 0 to 1.'
             )
         
@@ -216,10 +244,10 @@ with st.expander('Analyse your results ↴'):
            st.markdown(
                xplendid_bold_italic.replace('xplendid', 'Treatment'), 
                unsafe_allow_html = True)
-           n_trmt_xp = st.number_input(
+           n_trmt = st.number_input(
                'Sample Size', 0, key = 'ntrmt', label_visibility = 'hidden'
                )
-           p_trmt_xp = st.number_input(
+           p_trmt = st.number_input(
                'Conversions', key = 'ptrmt', label_visibility = 'hidden'
                )
            
@@ -247,7 +275,7 @@ with st.expander('Analyse your results ↴'):
         success = True
         try:
             ## Compute design inputs
-            ab_experiment_xp = ABTesting(bcr_xp, mde_xp, alpha = alpha_xp, 
+            ab_experiment_xp = ABLisk(bcr_xp, mde_xp, alpha = alpha_xp, 
                                             power = power_xp, is_absolute_variation = is_absolute_variation_xp,
                                            is_two_tailed = is_two_tailed_xp
                                            )           
@@ -264,16 +292,16 @@ with st.expander('Analyse your results ↴'):
             try:
                 ## Computing results for plotting 
                 fig = ab_experiment_xp.get_experiment_results(
-                    n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, plot_ = plot_xp
+                    n_ctrl, p_ctrl, n_trmt, p_trmt, plot_ = plot_xp
                     )
                 
                 ## Computing recommendations
                 results_summary = ab_experiment_xp.get_experiment_results(
-                                n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, plot_ = None
+                                n_ctrl, p_ctrl, n_trmt, p_trmt, plot_ = None
                                 )
                 
                 # Toast for notifying 0 as input of conversions
-                if 0 in [p_ctrl_xp, p_trmt_xp]:
+                if 0 in [p_ctrl, p_trmt]:
                     st.toast(zero_conv_hint)
                     
                 ## Dotted divider and spinner for procesing the plot display 
@@ -300,29 +328,36 @@ with st.expander('Analyse your results ↴'):
                     st.markdown(xplendid_div_body, unsafe_allow_html = True)
                     
                     ## Presenting results summary and recommendations
-                    print_summary_xp(
+                    
+                    print_experiment_summary(
                         results_summary[0], 
-                        stream_words_xp(results_summary[1], results_summary[2])
+                        stream_experiment_recommendations(
+                            results_summary[1], 
+                            results_summary[2]
+                            )
                         )
+                    
+                    # Storing results summary in session state
+                    st.session_state.update({'results_summary': results_summary})
                 
                     ## Close recommendation button 
                     _, _, close_col, _ = st.columns([4, 4, .3, .2])
                     if close_col.button('↖'):
                                  st.rerun()
-            except:
-                st.write(plot_error_hint)
+            except Exception as e:
+                st.error(f"Plot error: {e}")
+                
         else:
             pass
     
-
-    
+  
 # Feedback section
-_, _, fb_col = st.columns([1.5, 1.5, 1.5])
+chat_col, open_chat_col, _, fb_col = st.columns([.6, .2, 2.05, 1.5])
 with fb_col.container():
     for _ in range(4):
         st.write('')
     st.markdown(f'Rate **{xplendid_bold_italic}** now!', unsafe_allow_html = True) 
-    feedback_series = jbl.load('xplendidFeedbackSeries.joblib')
+    feedback_series = jbl.load('feedbacks.joblib')
     sentiment_mapping = ['one', 'two', 'three', 'four', 'five']
     selected = st.feedback('stars')
     st.markdown(xplendid_div_fb, unsafe_allow_html = True)
@@ -332,9 +367,44 @@ with fb_col.container():
         else:
             st.markdown(f'You gave {sentiment_mapping[selected]} stars to **xplendid**! Thank you for your feedback. 😉')
         feedback_series[len(feedback_series)] = sentiment_mapping[selected]
-        jbl.dump(feedback_series, 'xplendidFeedbackSeries.joblib')
+        jbl.dump(feedback_series, 'feedbacks.joblib')
     else:
         pass
+    
+# Chat element for xplendid, results or A/B testing in general
+@st.dialog(' ')
+def show_dialog(session_state):
+      
+    # Initializing the chat
+    messages = st.container()
+    messages.info(
+        '''
+        Hello! 👋🏾\n
+        Any question about **_xplendid_**, your results, or A/B testing?
+        '''
+        )
+    if 'chat_history' not in session_state:
+        session_state.chat_history = []
+                
+    # Triggering AI response given a user input           
+    if user_query := st.chat_input('Ask anything!'):
+        session_state.chat_history.append(
+            {'role': 'user', 'content': user_query}
+            )
+        response = ask_xplendid(session_state)  
+        session_state.chat_history.append(
+            {'role': 'assistant', 'content': response}
+            )         
+        
+    # Rendering all messages
+    for msg in session_state.chat_history:
+        with messages.chat_message(msg['role']):
+            st.markdown(msg['content'])                     
+
+ask_ai_animation = 'https://i.postimg.cc/50KXkr9R/ask-ai.gif'
+chat_col.markdown(f"<img src = {ask_ai_animation}>", unsafe_allow_html = True)
+if open_chat_col.button('⭹'):
+    show_dialog(st.session_state)
 
 
 
@@ -342,9 +412,11 @@ with fb_col.container():
 for i in range(8):
     st.write('')
 
+
 # Customized invite for connection
 container_title = '''<div style = 'text-align: center; color: #040404'><b>Let's connect! 🗪</b></div>'''
-st.markdown(container_title, unsafe_allow_html=True)
+st.markdown(container_title, unsafe_allow_html = True)
+
 
 # Connection icons
 kofi_icon_url = 'https://i.postimg.cc/wj3w1mjG/kofi-icon.png'
@@ -393,7 +465,7 @@ icons_markdown = f'''
 '''
 
 # Centralizing the connection icons
-_, middle, _ = st.columns([0.5, .5, 0.5])
+_, middle, _ = st.columns([.5, .5, .5])
 with middle.container(border = False):
     st.markdown(icons_markdown,
                 unsafe_allow_html = True)

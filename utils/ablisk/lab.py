@@ -5,38 +5,59 @@ import plotly.graph_objects as go
 import pandas as pd
 
 
-# A for A/B tests
-class ABTesting:
+# A class for A/B tests
+class ABLisk:
     
     # Initializing the class
-    def __init__(self, bcr: float, mde: float, alpha: float = 5, power: float = 80, is_absolute_variation: bool = True, is_two_tailed: bool = True):
+    def __init__(self, bcr: float, mde: float, alpha: float = .05, power: float = .8, is_absolute_variation: bool = True, is_two_tailed: bool = True):
+        
+        '''
+        Parameters
+        ----------
+        - bcr: the Baseline Conversion Rate.
+        - mde: the Minimum Detectable Effect (or practical significance).
+        - alpha: the Significance level of the experiment (default: 0.05).
+        - power: statistical power — measures the probability that the test will
+          reject the null hypothesis if the treatment really has an effect 
+          (default: 0.8).
+        - is_absolute_variation: whether the diffrence between the two groups is
+          absolute or relative (default: True)
+        -  is_two_tailed: for deciding between a two or a one-tailed test (default: True)
+        '''
+        
         # BCR value condition
-        if isinstance(bcr, (int, float)) and ((bcr < .0) or (bcr > 100.0)):
-            raise ValueError('Baseline Conversion Rate (bcr) spans from 0 and 100.')
+        if isinstance(bcr, (int, float)) and ((bcr < .0) or (bcr > 1.0)):
+            raise ValueError('Baseline Conversion Rate (bcr) spans from 0 and 1.')
         elif not isinstance(bcr, (int, float)):
             raise TypeError(f'Baseline Conversion Rate (bcr) must be a number! "{bcr}" was inserted instead.')
 
         # MDE value condition 
-        if isinstance(mde, (int, float)) and ((mde <= .0) or (mde > 100.0)):
-            raise ValueError('Minimum Detectable Effect must be greater than 0 or equal to 100!')
+        if isinstance(mde, (int, float)) and ((mde <= .0) or (mde > 1.0)):
+            raise ValueError('Minimum Detectable Effect must be greater than 0 or equal to 1!')
         elif not isinstance(mde, (int, float)):
             raise TypeError(f'Minimum Detectable Effect must be a number! "{mde}" was inserted instead.')
          
         # Significance Level and Power entries condition
-        if (not isinstance(alpha, (int, float))) or ((alpha < 0) or (alpha > 100)):
-            raise ValueError(f'Significance level must be between 0 and 100! Received "{alpha}".')
-        if (not isinstance(power, (int, float))) or ((power < 0) or (power > 100)):
-            raise ValueError(f'Power must range between 0 and 100! Received "{power}".')
+        if (not isinstance(alpha, (int, float))) or ((alpha < 0) or (alpha > 1)):
+            raise ValueError(f'Significance level must be between 0 and 1! Received "{alpha}".')
+        if (not isinstance(power, (int, float))) or ((power < 0) or (power > 1)):
+            raise ValueError(f'Power must range between 0 and 1! Received "{power}".')
                 
         # Attributes
-        self.bcr = bcr / 100
-        self.effect_size = (mde if is_absolute_variation else bcr * mde) / 100
-        self.tail = (alpha/2 if is_two_tailed else alpha) / 100
-        self.power = power / 100
+        self.bcr = bcr
+        self.effect_size = mde if is_absolute_variation else bcr * mde
+        self.tail = alpha/2 if is_two_tailed else alpha
+        self.power = power
        
         
     # Evan Miller Sample Size Calculator   
-    def evan_miller_sample_size(self) -> int:           
+    def evan_miller_sample_size(self) -> int:
+        
+        '''
+        A method for retrieving the required sample size using Evan Miller's 
+        methodology.
+        '''  
+        
         try:   
             # Setting the variation type    
             p2 = self.bcr + self.effect_size
@@ -60,7 +81,20 @@ class ABTesting:
 
     
     # A method for experiment results summary
-    def get_experiment_results(self, n_ctrl: int, p_ctrl: float, n_trmt: int, p_trmt: float, plot_ = None, lang = 'en'):        
+    def get_experiment_results(self, n_ctrl: int, p_ctrl: float, n_trmt: int, p_trmt: float, plot_ = None):  
+        """
+        Method for retrieving the experiment results.
+        
+        Parameters
+        ----------
+        - n_ctrl: the sample size of the control group.
+        - n_trmt: the size of the treatment group.
+        - p_ctrl: the proportion of conversion in the control group.
+        - p_trmt: the proportion of conversion in the treatment group.
+        - plot_type (default: 'KDE'): parameter for deciding whether to plot 
+          KDEs or Confidence Intervals for supporting the final decision.
+        """
+        
         # Proportions input conditions
         if isinstance(p_ctrl, (int, float)) and ((p_ctrl < .0) or (p_ctrl > 1.0)):
             raise ValueError('Proportion of conversion in the "Control" group spans from 0 and 1.')
@@ -76,17 +110,6 @@ class ABTesting:
             raise ValueError(f'Sample size of "Control" group must be a positive number. "{n_ctrl}" was inserted instead.')
         if not(isinstance(n_trmt, int) and (n_trmt > 0)):
             raise ValueError(f'Sample size of "Treatment" group must be a positive number. "{n_trmt}" was inserted instead.')
-        
-        ## Translating english entries to portuguese
-        if lang == 'en':
-            ctrl_label = 'Control' 
-        else:
-            ctrl_label = 'Controlo'
-            
-        if lang == 'en':
-            trmt_label = 'Treatment' 
-        else:
-            trmt_label = 'Efeito'        
         
         # Computing the pooled Standard Error
         pooled_p = (n_ctrl * p_ctrl + n_trmt * p_trmt) / (n_ctrl + n_trmt)
@@ -111,7 +134,7 @@ class ABTesting:
             y_ctrl = norm_ctrl.pdf(x_ctrl)
             
             # KDE Plot
-            if (plot_ == 'KDE') or (plot_ == 'Curvas de Distribuição'):
+            if plot_ == 'KDE':
                 fig = go.Figure()
             
                 # Control KDE
@@ -120,7 +143,7 @@ class ABTesting:
                     y = y_ctrl,
                     mode = 'lines',
                     line = dict(color = 'red', dash = 'dot'),
-                    name = ctrl_label
+                    name = 'Control'
                 ))
                 fig.add_trace(go.Scatter(
                     x = x_ctrl,
@@ -138,7 +161,7 @@ class ABTesting:
                     y = y_trmt,
                     mode ='lines',
                     line = dict(color = 'cyan', dash = 'dot'),
-                    name = trmt_label
+                    name = 'Treatment'
                 ))
                 fig.add_trace(go.Scatter(
                     x = x_trmt,
@@ -165,10 +188,11 @@ class ABTesting:
                     yaxis = dict(title = '', showticklabels = False),
                     xaxis = dict(title = ''),
                     autosize = True, 
-                    margin=dict(l=50, r=50, t=50, b=50)
+                    margin=dict(l = 50, r = 50, t = 50, b = 50)
                 )
-                            
-            elif (plot_ == 'Confidence Intervals') or (plot_ == 'Intervalos de Confiança'):
+                
+            
+            elif plot_ == 'Confidence Intervals':
                 # Error bars and effects
                 fig = go.Figure()
             
@@ -179,7 +203,7 @@ class ABTesting:
                     error_x = dict(type = 'data', symmetric = True, array = [lower_bound, 0, upper_bound]),
                     mode = 'markers',
                     marker = dict(color = 'red', size = 10),
-                    name = ctrl_label
+                    name = 'Control'
                 ))
             
                 # Treatment Error Bar
@@ -189,7 +213,7 @@ class ABTesting:
                     error_x = dict(type = 'data', symmetric = True, array = [d_hat_ci, d_hat, d_hat_ci]),
                     mode = 'markers',
                     marker = dict(color = 'cyan', size = 10),
-                    name = trmt_label
+                    name = 'Treatment'
                 ))
             
                 # MDE lines
@@ -206,7 +230,7 @@ class ABTesting:
                     y = [3, 9],
                     mode = 'lines',
                     line = dict(color = '#04ef62', dash = 'dot'),
-                    name = 'MDE',
+                    name='MDE',
                     showlegend = False
                 ))
             
@@ -243,46 +267,20 @@ class ABTesting:
             return fig
         else:
             results = d_hat_min, d_hat, d_hat_max, d_hat - self.effect_size
-            if lang == 'en':
-                idx = ['Min. Difference', 'Estimated Difference', 'Max. Difference', 'Lift/Drop']
-            elif lang == 'pt':
-                idx = ['Min. Diferença', 'Diferença Estimada', 'Max. Diferença', 'Incremento/Decremento']
-                
+            idx = ['Min. Difference', 'Estimated Difference', 'Max. Difference', 'Lift/Drop']
             results_df = pd.DataFrame(
                 results, columns = [''], index = idx
                 ).round(2)
 
             # Setting recommendations based on experiment results
-            ## First condition
             if d_hat_min >= self.effect_size:
-                if lang == 'en':
-                    recommendation = 'Given that the Minimum Estimated Difference is greater than or equal to the Minimum Detectable Effect, it is recommended to launch the alternative version!'
-                elif lang == 'pt':
-                    recommendation = 'Dado que a Mínima Diferença Estimada é maior ou igual a Mínima Diferença Esperada, recomenda-se lançar a variante alternativa!'
-            
-            ## Second condition
+                recommendation = 'Given that the Minimum Estimated Difference is greater than or equal to the Minimum Detectable Effect, it is recommended to launch the alternative version!'
             elif d_hat_max <= self.effect_size:
-                if lang == 'en':
-                    recommendation = 'Since the Maximum Estimated Difference is at least equal to the Minimum Detectable Effect, it is then recommended to keep the current version!'
-                elif lang == 'pt':
-                    recommendation = 'Visto que a Diferença Máxima Estimada é pelo menos igual a Mínima Diferença Esperada, sugere-se manter a variante actual!'
-            ## Last condition
+                recommendation = 'Since the Maximum Estimated Difference is lower than or equal to the Minimum Detectable Effect, it is then recommended to keep the current version!'
             else:
-                if lang == 'pt':
-                    recommendation = 'O Poder Estatístico do experimento poderá não ser robusto o suficiente para decidir entre uma ou outra variante. Logo, Indica-se a realização de testes adicionais.'
-                elif lang == 'en':
-                    recommendation = 'There might not have enough Power to draw any conclusion about the experiment results. Thus, it is recommended to conduct some additional tests.'
-            
-            ## Info to print
-            if lang == 'en':
-                line1 = 'Results and Recomendation\n==========================\n[1] Summary:\n'
-                line3 = f'\n\n[2] Recommendation:\n{recommendation}'
-                line4 = '\n\n\n\n*Note: This recommendation does not assume that you have designed your experiment correctly.'
-                rec_and_sum = line3 + line4
-            elif lang == 'pt':
-                line1 = 'Resultados e Recomendação\n==========================\n[1] Resumo:\n'
-                line3 = f'\n\n[2] Recomendação:\n{recommendation}'
-                line4 = '\n\n\n\n*Nota: Esta recommendação não assume que o design do seu experimento tenha sido feito correctamente.'
-            rec_and_sum = line3 + line4
-            
-            return (line1, results_df, rec_and_sum)
+                recommendation = 'There might not have enough Power to draw any conclusion about the experiment results. Thus, it is recommended to conduct some additional tests.'
+            line1 = 'Results and Recomendation\n==========================\n[1] Summary:\n'
+            line3 = f'\n\n[2] Recommendation:\n{recommendation}'
+            line4 = '\n\n\n\n*Note: This recommendation does not assume that you have designed your experiment correctly.'
+            rec_and_sum = line3 + line4            
+            print(line1, results_df, rec_and_sum)
