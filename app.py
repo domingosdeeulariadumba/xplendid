@@ -45,7 +45,7 @@ st.markdown(f"<img src = '{logo}'>", unsafe_allow_html = True)
 
 # Left divider before body
 left_bar = 'https://i.postimg.cc/QMZnYCdf/left-bar-body.png'
-st.markdown(f"<img src = {left_bar}>", unsafe_allow_html = True)
+st.markdown(f"<img src = '{left_bar}'>", unsafe_allow_html = True)
 
 # Welcome and overview
 st.markdown('''
@@ -89,13 +89,13 @@ st.write('Start exploring, analyzing, and achieving today! 🚀')
 
 # Right divider before body
 right_bar = 'https://i.postimg.cc/QdTyq1hB/right-bar-body.png'
-st.markdown(f"<img src = {right_bar}>", unsafe_allow_html = True)
+st.markdown(f"<img src = '{right_bar}'>", unsafe_allow_html = True)
 for _ in range(3):
     st.write('')
 
 # Design Icon
 design_icon = 'https://i.postimg.cc/65qpmcFk/design-icon.png'
-st.markdown(f"<img src = {design_icon}>", unsafe_allow_html = True)
+st.markdown(f"<img src = '{design_icon}'>", unsafe_allow_html = True)
 st.write('')
 
 # Outputs divider
@@ -186,7 +186,7 @@ with st.expander('Design your experiment ↴'):
 for _ in range(2):
     st.write('')
 analysis_icon = 'https://i.postimg.cc/4yLN3HH2/analysis-icon.png'
-st.markdown(f"<img src = {analysis_icon}>", unsafe_allow_html = True)
+st.markdown(f"<img src = '{analysis_icon}'>", unsafe_allow_html = True)
 st.write('')
 
 
@@ -402,7 +402,7 @@ def show_dialog(session_state):
             st.markdown(msg['content'])                     
 
 ask_ai_animation = 'https://i.postimg.cc/50KXkr9R/ask-ai.gif'
-chat_col.markdown(f"<img src = {ask_ai_animation}>", unsafe_allow_html = True)
+chat_col.markdown(f"<img src = '{ask_ai_animation}'>", unsafe_allow_html = True)
 if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 
