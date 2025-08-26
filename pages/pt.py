@@ -1,8 +1,9 @@
 # Dependências
 import streamlit as st
-from xplendidLab import ABTesting
-from xplendidFuncs import stream_words_sp, create_plot, \
-print_summary_xp, stream_words_xp
+from ablisk import ABLisk
+from utils.data import stream_design_recommendation, create_plot, \
+    stream_experiment_recommendations, print_experiment_summary
+from utils.ai import ask_xplendid
 import time
 import joblib as jbl
 
@@ -10,7 +11,9 @@ import joblib as jbl
 # Título, ícones e estilização
 pictograph = 'https://i.postimg.cc/y6DbW1FL/xplendid-pictograph.png'
 st.set_page_config(
-    page_title = 'xplendid', page_icon = pictograph, layout = 'centered',
+    page_title = 'xplendid',
+    page_icon = pictograph, 
+    layout = 'centered',
     initial_sidebar_state = 'collapsed'
 ) 
 
@@ -19,29 +22,36 @@ st.markdown(
     '''
     <style>
         .stApp {
-            background: #E1EBEE; /*Blue grey*/
+            background: #E1EBEE;
         }
     </style>
 ''',
     unsafe_allow_html = True
 )
 
+
+# A apagar a sessão da página em Inglês
+if 'pt_initialized' not in st.session_state:
+    st.session_state['chat_history'] = []
+    st.session_state['pt_initialized'] = True
+    
 # Link para mudança de página
 _, _, lang_col = st.columns([4, 4, .8])
-lang_col.page_link('xplendidAppEn.py', label = '', icon = '🇬🇧')
+lang_col.page_link('app.py', label = '', icon = '🇬🇧')
 st.write('')
 
 # Logo
-st.image('https://i.postimg.cc/cCJg1kKz/xplendid-logo-body.png')
+logo = 'https://i.postimg.cc/cCJg1kKz/xplendid-logo-body.png'
+st.markdown(f"<img src = '{logo}'>", unsafe_allow_html = True)
 
 # Divisor antes do corpo
 left_bar = 'https://i.postimg.cc/QMZnYCdf/left-bar-body.png'
-st.image(left_bar)
+st.markdown(f"<img src = {left_bar}>", unsafe_allow_html = True)
 
 # Boas vindas e visão geral
 st.markdown('''
         <div style='text-align: justify;'>
-         Bem vindo ao <strong><em>xplendid</em></strong> — a plataforma ideal para o design e análise dos seus experimentos. Quer optimizar o seu website, refinar funcionalidades dos seus produtos ou  melhorar o desempenho das suas campanhas de marketing? O <strong><em>xplendid</em></strong> coloca à sua disposição as ferramentas necessárias chegar a estes resultados.
+         Bem vindo ao <strong><em>xplendid</em></strong> — a plataforma ideal para design e análise dos seus experimentos A/B. Quer optimizar o seu website, refinar funcionalidades dos seus produtos ou  melhorar o desempenho das suas campanhas de marketing? Esta aplicação coloca à sua disposição as ferramentas necessárias chegar a estes resultados.
          </div>
 ''', 
 unsafe_allow_html = True
@@ -51,19 +61,19 @@ unsafe_allow_html = True
 xplendid_bold_italic = "<span style = 'color: #ff66c4;'><strong><em>xplendid</strong></em></span>"
 
 # Mais sobre xplendid
-if st.button('👁'):
+if st.button('↘'):
     st.markdown(
         f'''
         <div style='text-align: justify;'>
         <strong>O que faz este serviço excepcional?</strong>
         
-        - <em><strong>Experimentação Simplificada: {xplendid_bold_italic}</strong> remove as complixidades do processo de análise the experimentos com precisão, intuição e rapidez. Calcule tamanho de amostras, compare resultados e desvende os insights ao detalhe.</em>
+        - <em><strong>Experimentação Simplificada: {xplendid_bold_italic}</strong> remove as complexidades do processo de análise the experimentos A/B com precisão, intuição e rapidez. Calcule tamanho de amostras, compare resultados e desvende os insights ao detalhe.</em>
  
-        - <em><strong>Relatórios Informativos:</em></strong> aprofunde a análise dos seus dados como nunca através de visualizaçoes interativas. Desde gráficos de erros, para efeitos de comparativos, o {xplendid_bold_italic} transforma simples números em visuais sugestivos para tomada de decisão em ambientes dinâmicos.</em>
+        - <em><strong>Relatórios Informativos:</em></strong> aprofunde a análise dos seus dados como nunca através de visualizaçoes interativas. Desde gráficos de erros, para efeitos comparativos, o {xplendid_bold_italic} transforma simples números em visuais sugestivos para tomada de decisão em ambientes dinâmicos.</em>
         
         - <em><strong>Recomendações Inteligentes:</strong> vá além dos números — receba oriantações para compreender os "porquês" e as próximas etapas de implementação dos seus experimentos.</em>
         
-        - <em><strong>Óptima Experiência de Utilizador:</em></strong> com uma simples e prática, no {xplendid_bold_italic} tudo o que é tudo o que é necessário para o seu experimento está a um click.</em>
+        - <em><strong>Óptima Experiência de Utilizador:</em></strong> com uma simples e prática, no {xplendid_bold_italic} tudo o que é para o seu experimento está a um click.</em>
         
         - <em><strong>Feita para Inovadores:</em></strong> ideal para profissionais de marketing, product managers, analistas e cientistas de dados, e demais interessados em tomar decisões com uma abordagem data-driven. Com {xplendid_bold_italic} seus dados se tornam superpoderes.</em>
         </div>
@@ -71,22 +81,23 @@ if st.button('👁'):
         unsafe_allow_html = True
         )
     _, _, less = st.columns([3, 3, .3])
-    if less.button('━'):
+    if less.button('↖'):
         st.rerun()
 
 # Call-to-action para começar a explorar o xplendid
 st.write(' ') 
-st.write('Faça do **_xplendid_** a chave para o sucesso dos seus experimentos. Explore, analise e produza resultados hoje! 🚀')
+st.write('Explore, analise e produza resultados hoje! 🚀')
 
 # Barra divisora antes do corpo da página
 right_bar = 'https://i.postimg.cc/QdTyq1hB/right-bar-body.png'
-st.image(right_bar)
+st.markdown(f"<img src = {right_bar}>", unsafe_allow_html = True)
 for _ in range(3):
     st.write('')
 
 # Ícone para design de experimentos
-design_icon = 'https://i.postimg.cc/3JmKkyVB/design-icon.png'
-st.image(design_icon)
+design_icon = 'https://i.postimg.cc/65qpmcFk/design-icon.png'
+st.markdown(f"<img src = {design_icon}>", unsafe_allow_html = True)
+st.write('')
 
 # Divisor de outputs
 xplendid_div_body = '''
@@ -95,7 +106,7 @@ xplendid_div_body = '''
 
 # Divisor da secção de feedback
 xplendid_div_fb = '''
-<div style = 'width: 58%; height: 2px; background-color:  #ff66c4'></div>
+<div style = 'width: 52%; height: 2px; background-color:  #ff66c4'></div>
 '''
             
 # Texto para objecto 'toast' em tratamento de excepção
@@ -116,38 +127,54 @@ with st.expander('Planeie o seu experimento ↴'):
         st.write('\n')
     left_sp, _, right_sp = st.columns([1.5, .5, 1.5])
     with left_sp.container():
-        bcr_sp = st.number_input('Taxa de Conversão de Referência (%)', help = 'Varia de 0 a 100.')
-        
+        bcr_sp = st.number_input(
+            'Taxa de Conversão de Referência (%)', 
+            help = 'Varia de 0 a 100.',
+            key = 'bcr_sp'
+            )        
         st.write('\n')
-        mde_sp = st.number_input('Mínima Diferença Esperada (%)', help = 'Deve ser positiva.')
+        mde_sp = st.number_input(
+            'Mínima Diferença Esperada (%)', 
+            help = 'Deve ser positiva.',
+            key = 'mde_sp'
+            )
         st.write('\n')
-        is_absolute_variation_sp = st.toggle('Variação Absoluta', True)
+        is_absolute_variation_sp = st.toggle('Variação Absoluta', True, key = 'var_sp')
     
     with right_sp.container():
-        alpha_sp = st.slider('Nível de Significância (%)', 1, 10, 5)
-        power_sp = st.slider('Poder Estatístico (%)', 80, 99)
-        is_two_tailed_sp = st.toggle('Teste Bicaudal', True)
+        alpha_sp = st.slider('Nível de Significância (%)', 1, 10, 5, key = 'alpha_sp')
+        power_sp = st.slider('Poder Estatístico (%)', 80, 99, key = 'power_sp')
+        is_two_tailed_sp = st.toggle('Teste Bicaudal', True, key = 'tail_sp')
         st.write('\n\n')
     _, sample_size, _ = st.columns(3)
 
     # A computar inputs para cálculo de tamanho de amostra ideal
     try:    
         if sample_size.button('Calcular Tamanho Amostral'):
-            ab_exp_sp = ABTesting(bcr_sp, mde_sp, alpha = alpha_sp, 
+            ab_exp_sp = ABLisk(bcr_sp, mde_sp, alpha = alpha_sp, 
                                             power = power_sp, is_absolute_variation = is_absolute_variation_sp,
                                            is_two_tailed = is_two_tailed_sp)
             min_sample_size = ab_exp_sp.evan_miller_sample_size()
             
             # A apresentar a informação relativa ao tamanho amostral
             if type(min_sample_size) is int: 
-                message_sp_1 = 'Você deve conduzir o seu experimento com, no mínimo,'
+                message_sp_1 = 'Deves conduzir o teu experimento com, no mínimo,'
                 message_sp_2 = f' **{min_sample_size}** '
                 message_sp_3 = 'observações por variante.'
                 message_sp = message_sp_1 + message_sp_2 + message_sp_3
                 st.write('')
                 st.write_stream(
-                    stream_words_sp(xplendid_div_body, message_sp)
+                    stream_design_recommendation(
+                        xplendid_div_body,
+                        message_sp
+                        )
                     )
+                
+                # Salvando os valores na sessão
+                st.session_state.update({
+                    'min_sample_size': min_sample_size,
+                    'message_sp': message_sp
+                            })
             else:
                 st.toast(inputs_sp)                
     except:
@@ -158,8 +185,9 @@ with st.expander('Planeie o seu experimento ↴'):
 # Ícone para resultados do experimento
 for _ in range(2):
     st.write('')
-analysis_icon = 'https://i.postimg.cc/7h1Wkytg/analysis-icon.png'
-st.image(analysis_icon)
+analysis_icon = 'https://i.postimg.cc/4yLN3HH2/analysis-icon.png'
+st.markdown(f"<img src = {analysis_icon}>", unsafe_allow_html = True)
+st.write('')
 
 
 # Expansor para análise de resultados do experimento
@@ -204,10 +232,10 @@ with st.expander('Analise os seus resultados ↴'):
         st.markdown(
             xplendid_bold_italic.replace('xplendid', 'Controlo'), 
             unsafe_allow_html = True)
-        n_ctrl_xp = st.number_input(
+        n_ctrl = st.number_input(
             '_Tamanho da Amostra_', 0, key = 'nctrl', help = 'Deve ser um inteiro positivo.'
             )
-        p_ctrl_xp = st.number_input(
+        p_ctrl = st.number_input(
             '_Convertidos_', key = 'pctrl', help = 'Varia de 0 a 1.'
             )
         
@@ -216,10 +244,10 @@ with st.expander('Analise os seus resultados ↴'):
            st.markdown(
                xplendid_bold_italic.replace('xplendid', 'Efeito'), 
                unsafe_allow_html = True)
-           n_trmt_xp = st.number_input(
+           n_trmt = st.number_input(
                'Tamanho da Amastra', 0, key = 'ntrmt', label_visibility = 'hidden'
                )
-           p_trmt_xp = st.number_input(
+           p_trmt = st.number_input(
                'Convertidos', key = 'ptrmt', label_visibility = 'hidden'
                )
            
@@ -247,7 +275,7 @@ with st.expander('Analise os seus resultados ↴'):
         success = True
         try:
             ## A computar resultados
-            ab_experiment_xp = ABTesting(bcr_xp, mde_xp, alpha = alpha_xp, 
+            ab_experiment_xp = ABLisk(bcr_xp, mde_xp, alpha = alpha_xp, 
                                             power = power_xp, is_absolute_variation = is_absolute_variation_xp,
                                            is_two_tailed = is_two_tailed_xp
                                            )                 
@@ -264,17 +292,17 @@ with st.expander('Analise os seus resultados ↴'):
             try:
                 ## A criar gráfico com o título em português
                 fig = ab_experiment_xp.get_experiment_results(
-                    n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, plot_ = plot_xp, lang = 'pt'
+                    n_ctrl, p_ctrl, n_trmt, p_trmt, plot_ = plot_xp, lang = 'pt'
                     )
                 fig.update_layout(title = dict(text = 'Resultados do Experimento'))
                 
                 ## A gerar recomendação
                 results_summary = ab_experiment_xp.get_experiment_results(
-                                n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, plot_ = None, lang = 'pt'
+                                n_ctrl, p_ctrl, n_trmt, p_trmt, plot_ = None, lang = 'pt'
                                 )
                 
                 # Notificação para o caso de se ter 0 convertidos
-                if 0 in [p_ctrl_xp, p_trmt_xp]:
+                if 0 in [p_ctrl, p_trmt]:
                     st.toast(zero_conv_hint)
                     
                 ## Divisor e spinner para apresentar resultados 
@@ -301,10 +329,16 @@ with st.expander('Analise os seus resultados ↴'):
                     st.markdown(xplendid_div_body, unsafe_allow_html = True)
                     
                     ## A apresentar resultados e recomendações
-                    print_summary_xp(
+                    print_experiment_summary(
                         results_summary[0], 
-                        stream_words_xp(results_summary[1], results_summary[2])
+                        stream_experiment_recommendations(
+                            results_summary[1], 
+                            results_summary[2]
+                            )
                         )
+                    
+                    # A salvar o resumo na sessão
+                    st.session_state.update({'results_summary': results_summary})
                 
                     ## A fechar a secção de resultados
                     _, _, close_col, _ = st.columns([4, 4, .3, .2])
@@ -318,12 +352,12 @@ with st.expander('Analise os seus resultados ↴'):
 
     
 # Secção de feedback
-_, _, fb_col = st.columns([1.5, 1.5, 1.5])
+chat_col, open_chat_col, _, fb_col = st.columns([.6, .2, 2.1, 1.7])
 with fb_col.container():
     for _ in range(4):
         st.write('')
     st.markdown(f'Avalie o **{xplendid_bold_italic}** agora!', unsafe_allow_html = True) 
-    feedback_series = jbl.load('xplendidFeedbackSeries.joblib')
+    feedback_series = jbl.load('feedbacks.joblib')
     sentiment_mapping = ['uma', 'duas', 'três', 'quatro', 'cinco']
     selected = st.feedback('stars')
     st.markdown(xplendid_div_fb, unsafe_allow_html = True)
@@ -333,9 +367,45 @@ with fb_col.container():
         else:
             st.markdown(f'Você deu **{sentiment_mapping[selected]}** estrelas ao **xplendid**! Obrigado pelo seu feedback. 😉')
         feedback_series[len(feedback_series)] = sentiment_mapping[selected]
-        jbl.dump(feedback_series, 'xplendidFeedbackSeries.joblib')
+        jbl.dump(feedback_series, 'feedbacks.joblib')
     else:
         pass
+
+
+# Chat e seus elementos
+@st.dialog(' ')
+def show_dialog(session_state):
+      
+    # Initialização do chat
+    messages = st.container()
+    messages.info(
+        '''
+        Olá! 👋🏾\n
+        Alguma questão sobre o **_xplendid_**, teus resultados, ou experimentos A/B?
+        '''
+        )
+    if 'chat_history' not in session_state:
+        session_state.chat_history = []  
+        
+    # Accionando a resposta do assistente           
+    if user_query := st.chat_input('Exponha a sua questão!'):
+        session_state.chat_history.append(
+            {'role': 'user', 'content': user_query}
+            )
+        response = ask_xplendid(session_state, lang = 'pt')  
+        session_state.chat_history.append(
+            {'role': 'assistant', 'content': response}
+            )         
+        
+    # Renderização da conversa
+    for msg in session_state.chat_history:
+        with messages.chat_message(msg['role']):
+            st.markdown(msg['content'])                     
+
+ask_ai_animation = 'https://i.postimg.cc/CxCzV5LD/pergunte-a-ia.gif'
+chat_col.markdown(f"<img src = {ask_ai_animation}>", unsafe_allow_html = True)
+if open_chat_col.button('⭹'):
+    show_dialog(st.session_state)
 
 
 
@@ -394,7 +464,7 @@ icons_markdown = f'''
 '''
 
 # Centralização dos ícones
-_, middle, _ = st.columns([0.5, .5, 0.5])
+_, middle, _ = st.columns([.5, .5, .5])
 with middle.container(border = False):
     st.markdown(icons_markdown,
                 unsafe_allow_html = True)
