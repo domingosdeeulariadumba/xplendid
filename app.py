@@ -1,6 +1,6 @@
 # Dependencies
 import streamlit as st
-from ablisk import ABLisk
+from utils.ablisk import ABLisk
 from utils.data import stream_design_recommendation, create_plot, \
     stream_experiment_recommendations, print_experiment_summary
 from utils.ai import ask_xplendid
@@ -475,4 +475,5 @@ footer_markdown = '''<div style = 'text-align: center; color: #040404'>
 Developed by <b>Domingos de Eulária Dumba</b>
  © 2025.
 </div>'''
+
 st.markdown(footer_markdown, unsafe_allow_html = True)
