@@ -1,4 +1,4 @@
-# Dependências
+## Dependências
 import streamlit as st
 from utils.ablisk import ABLisk
 from utils.data import stream_design_recommendation, create_plot, \
@@ -46,7 +46,7 @@ st.markdown(f"<img src = '{logo}'>", unsafe_allow_html = True)
 
 # Divisor antes do corpo
 left_bar = 'https://i.postimg.cc/QMZnYCdf/left-bar-body.png'
-st.markdown(f"<img src = '{left_bar}'>", unsafe_allow_html = True)
+st.markdown(f"<img src = {left_bar}>", unsafe_allow_html = True)
 
 # Boas vindas e visão geral
 st.markdown('''
@@ -90,13 +90,13 @@ st.write('Explore, analise e produza resultados hoje! 🚀')
 
 # Barra divisora antes do corpo da página
 right_bar = 'https://i.postimg.cc/QdTyq1hB/right-bar-body.png'
-st.markdown(f"<img src = '{right_bar}'>", unsafe_allow_html = True)
+st.markdown(f"<img src = {right_bar}>", unsafe_allow_html = True)
 for _ in range(3):
     st.write('')
 
 # Ícone para design de experimentos
 design_icon = 'https://i.postimg.cc/65qpmcFk/design-icon.png'
-st.markdown(f"<img src = '{design_icon}'>", unsafe_allow_html = True)
+st.markdown(f"<img src = {design_icon}>", unsafe_allow_html = True)
 st.write('')
 
 # Divisor de outputs
@@ -186,7 +186,7 @@ with st.expander('Planeie o seu experimento ↴'):
 for _ in range(2):
     st.write('')
 analysis_icon = 'https://i.postimg.cc/4yLN3HH2/analysis-icon.png'
-st.markdown(f"<img src = '{analysis_icon}'>", unsafe_allow_html = True)
+st.markdown(f"<img src = {analysis_icon}>", unsafe_allow_html = True)
 st.write('')
 
 
@@ -403,7 +403,7 @@ def show_dialog(session_state):
             st.markdown(msg['content'])                     
 
 ask_ai_animation = 'https://i.postimg.cc/CxCzV5LD/pergunte-a-ia.gif'
-chat_col.markdown(f"<img src = '{ask_ai_animation}'>", unsafe_allow_html = True)
+chat_col.markdown(f"<img src = {ask_ai_animation}>", unsafe_allow_html = True)
 if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 
