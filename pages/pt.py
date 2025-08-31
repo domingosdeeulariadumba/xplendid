@@ -471,7 +471,7 @@ with middle.container(border = False):
     
 # Rodapé
 footer_markdown = '''<div style = 'text-align: center; color: #040404'>
-Desenvolvido por <b>Domingos de Eulária Dumba</b>
+Criado por <b>Domingos de Eulária Dumba</b>
  © 2025.
 </div>'''
 st.markdown(footer_markdown, unsafe_allow_html = True)
