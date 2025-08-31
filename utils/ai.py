@@ -53,9 +53,7 @@ def ask_xplendid(session_state, lang = 'en'):
         is_two_tailed_xp, n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, 
         results_and_recommendation, min_sample_size
         )
-    
-    print(prompt) # Prompt Debugging
-    
+   
     # Looping through all API keys
     messages = session_state.chat_history 
     conversation = [{'role': 'system', 'content': prompt}] + messages 
