@@ -1,19 +1,8 @@
 # Dependencies
-from dotenv import load_dotenv
 from openai import OpenAI
+from utils.credentials import load_credentials
 from openai import RateLimitError, APIConnectionError
 from utils.data import get_exception_responses, get_prompt_text
-import os
-
-# Environment variables   
-load_dotenv()
-api_keys = [os.getenv(f'API_KEY{1 + i}') for i in range(4)]
-base_urls = sorted([os.getenv(f'BASE_URL{1 + i}') for i in range(2)] * 2)
-models = sorted(
-    [os.getenv(f'MODEL{1 + i}') for i in range(2)] * 2,
-    reverse = True
-    )
-
 
 # A function to provide AI responses 
 def ask_xplendid(session_state, lang = 'en'):       
@@ -54,10 +43,11 @@ def ask_xplendid(session_state, lang = 'en'):
         )
       
     # Conversation setup
+    credentials = load_credentials()
     messages = session_state.chat_history 
     conversation = [{'role': 'system', 'content': prompt}] + messages 
     exceptions = get_exception_responses(lang)
-    for api_key, base_url, model in zip(api_keys, base_urls, models): 
+    for api_key, base_url, model in credentials: 
         try:
             client = OpenAI(api_key = api_key, base_url = base_url) 
             completion = client.chat.completions.create(
