@@ -16,8 +16,7 @@ models = sorted(
 
 
 # A function to provide AI responses 
-def ask_xplendid(session_state, lang = 'en'):
-       
+def ask_xplendid(session_state, lang = 'en'):       
     # Prompt setup
         ## Design data
     bcr_sp = session_state.get('bcr_sp', 'Not Defined')
@@ -29,7 +28,7 @@ def ask_xplendid(session_state, lang = 'en'):
     min_sample_size = session_state.get('min_sample_size', 'Not Defined')
     message_sp = session_state.get('message_sp', 'Not Defined')
         
-        ## Analysis data
+        ## Experiment data
     bcr_xp = session_state.get('bcr_xp', 'Not Defined')
     mde_xp = session_state.get('mde_xp', 'Not Defined')
     alpha_xp = session_state.get('alpha_xp', 'Not Defined')
@@ -53,10 +52,12 @@ def ask_xplendid(session_state, lang = 'en'):
         is_two_tailed_xp, n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, 
         results_and_recommendation, min_sample_size
         )
-   
-    # Looping through all API keys
+    
+    
+    # Conversation setup
     messages = session_state.chat_history 
     conversation = [{'role': 'system', 'content': prompt}] + messages 
+    exceptions = get_exception_responses(lang)
     for api_key, base_url, model in zip(api_keys, base_urls, models): 
         try:
             client = OpenAI(api_key = api_key, base_url = base_url) 
@@ -65,15 +66,11 @@ def ask_xplendid(session_state, lang = 'en'):
                 messages = conversation,
                 temperature = .975
                 )
-            break
-        except Exception as e:
-            exceptions = get_exception_responses(lang)
-            if isinstance(e, RateLimitError):
+            return completion.choices[0].message.content
+        except RateLimitError:
                 return exceptions[0]
-            elif isinstance(e, APIConnectionError):
-                return exceptions[1]
-            else:
-                return exceptions[-1]            
-    # AI response
-    response = completion.choices[0].message.content
-    return response
+        except APIConnectionError:
+               continue
+        except:
+                return exceptions[-1]
+    return exceptions[1]
