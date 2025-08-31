@@ -1,4 +1,5 @@
 # Dependencies
+import streamlit as st
 from openai import OpenAI
 from utils.credentials import load_credentials
 from openai import RateLimitError, APIConnectionError
@@ -60,7 +61,7 @@ def ask_xplendid(session_state, lang = 'en'):
         except APIConnectionError:
                continue
         except:
-                return exceptions[-1]
+             return exceptions[-1]        
     return exceptions[1]
 
 
