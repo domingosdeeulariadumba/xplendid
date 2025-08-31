@@ -30,7 +30,7 @@ def ask_xplendid(session_state, lang = 'en'):
     p_trmt_xp = session_state.get('ptrmt', 'Not Defined')
     results_summary = session_state.get('results_summary', 'Not Defined')
     results_and_recommendation = ''.join(str(i) for i in results_summary)
-    text = st.secrets['prompt_en'] if lang == 'en' else st.secrets['prompt_pt'] 
+    text = st.secrets['prompt']['en'] if lang == 'en' else st.secrets['prompt']['pt'] 
     prompt= text.format(
         # Inputs and outputs of design session
         bcr_sp, mde_sp, alpha_sp, power_sp, is_absolute_variation_sp,
