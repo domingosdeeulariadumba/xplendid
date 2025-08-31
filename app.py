@@ -472,7 +472,7 @@ with middle.container(border = False):
     
 # Footer stuff
 footer_markdown = '''<div style = 'text-align: center; color: #040404'>
-Developed by <b>Domingos de Eulária Dumba</b>
+Created by <b>Domingos de Eulária Dumba</b>
  © 2025.
 </div>'''
 
