@@ -1,7 +1,7 @@
 # Dependencies
 import streamlit as st
 from utils.ablisk import ABLisk
-from utils.data import stream_design_recommendation, create_plot, \
+from utils.core import stream_design_recommendation, create_plot, \
     stream_experiment_recommendations, print_experiment_summary
 from utils.ai import ask_xplendid
 import time
