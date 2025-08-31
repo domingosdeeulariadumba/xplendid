@@ -1,2 +1,4 @@
-# Pycache stuff
 __pycache__/
+.env
+/prompts
+credentials.py
