@@ -2,7 +2,6 @@
 from openai import OpenAI
 from utils.credentials import load_credentials
 from openai import RateLimitError, APIConnectionError
-from utils.data import get_exception_responses, get_prompt_text
 
 # A function to provide AI responses 
 def ask_xplendid(session_state, lang = 'en'):       
@@ -30,7 +29,7 @@ def ask_xplendid(session_state, lang = 'en'):
     p_trmt_xp = session_state.get('ptrmt', 'Not Defined')
     results_summary = session_state.get('results_summary', 'Not Defined')
     results_and_recommendation = ''.join(str(i) for i in results_summary)
-    text = get_prompt_text(lang)
+    text = st.secrets['prompt_en'] if lang == 'en' else st.secrets['prompt_pt'] 
     prompt= text.format(
         # Inputs and outputs of design session
         bcr_sp, mde_sp, alpha_sp, power_sp, is_absolute_variation_sp,
@@ -63,3 +62,16 @@ def ask_xplendid(session_state, lang = 'en'):
         except:
                 return exceptions[-1]
     return exceptions[1]
+
+
+# Exception response from AI assistant
+def get_exception_responses(lang):  
+    if lang == 'en':          
+        exceptions = '⚠️ You are out of credits! Please, try again later.', \
+        '🌐 Connection error. Please, check your internet.',\
+            'An unexpected error occurred! :('
+    else:
+        exceptions = '⚠️ Ficaste sem créditos! Por favor, tenta mais tarde!', \
+            '🌐 Erro de conexão. Por favor, Verifique a sua internet.',\
+                'Ocorreu um erro inesperado! :('
+    return exceptions
