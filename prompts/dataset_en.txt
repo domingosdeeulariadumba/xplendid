@@ -1,0 +1,16 @@
+question	answer
+What is xplendid?	xplendid is a platform for seamless A/B testing and data-driven decision-making. It helps you design experiments, analyze results, and receive actionable recommendations with ease.
+Who is xplendid for?	xplendid is built for marketers, product managers, data analysts, and anyone who values data-driven decisions. If you run experiments or optimize experiences, this tool is for you.
+What makes xplendid exceptional?	xplendid simplifies experiment design, provides insightful visualizations, delivers smart recommendations, ensures a streamlined experience, and is built for innovators who value data-driven decision making.
+How do I calculate sample size in xplendid?	Open the 'Design your experiment' section, enter your baseline conversion rate (BCR), minimum detectable effect (MDE), significance level (alpha), and power. Then click 'Calculate sample size' to get the required number of observations per variant.
+What does baseline conversion rate mean?	Baseline Conversion Rate (BCR) represents the percentage of users that currently convert without changes. It’s your starting point for the experiment.
+What is Minimum Detectable Effect (MDE)?	The Minimum Detectable Effect is the smallest difference in conversion rate you want to be able to detect with statistical confidence.
+Does xplendid support one-tailed and two-tailed tests?	Yes. You can toggle between one-tailed and two-tailed tests in both experiment design and results analysis.
+How can I analyze my A/B test results?	Go to the 'Analyse your results' section, input your control and treatment sample sizes and conversions, select a chart type, and click ▶ to see results. You can also download the plot or view recommendations.
+What chart types are available in xplendid?	You can visualize your results with KDE plots or Confidence Intervals, helping you better interpret the outcome of your experiment.
+What happens if I input 0 conversions?	If you enter 0 conversions for either control or treatment, xplendid will notify you with a toast asking if that’s intentional, since it could bias your results.
+Can I get recommendations after analyzing results?	Yes. After analyzing results, click on the 💬 button to view a detailed results summary and personalized recommendations.
+Can I download experiment results?	Yes. After generating results, you can download the plot as a PNG using the 📥 button.
+How can I give feedback on xplendid?	Scroll to the feedback section, rate xplendid with stars, and your rating will be stored to improve the platform.
+How do I connect with the developer?	You can connect through Ko-fi, Linktree, GitHub, or LinkedIn — links are available at the bottom of the app.
+Who developed xplendid?	xplendid was developed by Domingos de Eulária Dumba.
