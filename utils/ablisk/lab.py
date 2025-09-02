@@ -283,4 +283,4 @@ class ABLisk:
             line3 = f'\n\n[2] Recommendation:\n{recommendation}'
             line4 = '\n\n\n\n*Note: This recommendation does not assume that you have designed your experiment correctly.'
             rec_and_sum = line3 + line4            
-            print(line1, results_df, rec_and_sum)
+            return line1, results_df, rec_and_sum
