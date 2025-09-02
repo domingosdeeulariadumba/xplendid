@@ -1,8 +1,8 @@
 # Dependencies
 import streamlit as st
-from openai import OpenAI
 from utils.credentials import load_credentials
-from openai import RateLimitError, APIConnectionError
+from openai import OpenAI, RateLimitError, APIConnectionError
+
 
 # A function to provide AI responses 
 def ask_xplendid(session_state, lang = 'en'):       
