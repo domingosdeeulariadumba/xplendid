@@ -32,11 +32,11 @@ def ask_xplendid(session_state, lang = 'en'):
     results_and_recommendation = ''.join(str(i) for i in results_summary)
     text = st.secrets['prompt']['en'] if lang == 'en' else st.secrets['prompt']['pt'] 
     prompt= text.format(
-        # Inputs and outputs of design session
+        # Inputs and outputs of design section
         bcr_sp, mde_sp, alpha_sp, power_sp, is_absolute_variation_sp,
         is_two_tailed_sp, min_sample_size, message_sp,
         
-        # Inputs and outputs of experiment results session        
+        # Inputs and outputs of experiment results section        
         bcr_xp, mde_xp, power_xp, alpha_xp, is_absolute_variation_xp,
         is_two_tailed_xp, n_ctrl_xp, p_ctrl_xp, n_trmt_xp, p_trmt_xp, 
         results_and_recommendation, min_sample_size
@@ -55,7 +55,8 @@ def ask_xplendid(session_state, lang = 'en'):
                 messages = conversation,
                 temperature = .975
                 )
-            return completion.choices[0].message.content
+            response = completion.choices[0].message.content
+            return response
         except RateLimitError:
                 return exceptions[0]
         except APIConnectionError:
