@@ -344,8 +344,9 @@ with st.expander('Analyse your results ↴'):
                     _, _, close_col, _ = st.columns([4, 4, .3, .2])
                     if close_col.button('↖'):
                                  st.rerun()
-            except:
-                st.write(plot_error_hint)
+            except Exception as e:
+                st.error(f'Error: {e}')
+                #st.write(plot_error_hint)
                 
         else:
             pass
