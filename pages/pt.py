@@ -1,11 +1,14 @@
 ## Dependências
-import streamlit as st
-from utils.ablisk import ABLisk
-from utils.core import stream_design_recommendation, create_plot, \
-    stream_experiment_recommendations, print_experiment_summary
-from utils.ai import ask_xplendid
 import time
 import joblib as jbl
+import streamlit as st
+from ablisk import ABLisk
+from utils.ai import ask_xplendid
+from utils.exceptions import stats_exceptions
+from utils.core import (
+    stream_design_recommendation, create_plot, 
+    stream_experiment_recommendations, print_experiment_summary, pt_recommendation
+)
 
 
 # Título, ícones e estilização
@@ -109,76 +112,67 @@ xplendid_div_fb = '''
 <div style = 'width: 52%; height: 2px; background-color:  #ff66c4'></div>
 '''
             
-# Texto para objecto 'toast' em tratamento de excepção
-hint = '❌ Input(s) incorrecto(s)! Passe o mouse sobre o ícone ❔ para mais detalhes.'
+# Tratamento de excepções relativos ao design e à análise do experimento
+global_error_msg, design_error_msg, zero_conversions_warning, plot_error_msg = stats_exceptions('pt')
 
-# 'Toast' para validação de TCR e MDE na secção de design
-inputs_sp = '🚨 Entrada(s) incorrecta(s)! Verifique os parâmetros **TCR** ou **MDE**.'
-
-# 'Toast' para notificação de '0' como entrada para proporção de conversões
-zero_conv_hint = '🔔 Inseriu **_:red[0]_** como entrada em **Convertidos**. _Sem problemas?_'
-
-# 'Toast' para notificação sobre ausência de dados por apresentar
-plot_error_hint = ':( Não é possível apresentar os resultados! Insira entradas válidas para **:red[Tamanho da Amostra]** e **:red[Convertidos:red]**.'
-
-# Expansor para calculador de amostras
+# Expansor da calculadora de dimensão amostral
 with st.expander('Planeie o seu experimento ↴'):
     for _ in range(5):
         st.write('\n')
-    left_sp, _, right_sp = st.columns([1.5, .5, 1.5])
-    with left_sp.container():
-        bcr_sp = st.number_input(
+    ex_design_left, _, ex_design_right = st.columns([1.5, .5, 1.5])
+    with ex_design_left.container():
+        bcr_design = st.number_input(
             'Taxa de Conversão de Referência (%)', 
             help = 'Varia de 0 a 100.',
-            key = 'bcr_sp'
+            key = 'bcr_design'
             )        
         st.write('\n')
-        mde_sp = st.number_input(
-            'Mínima Diferença Esperada (%)', 
-            help = 'Deve ser positiva.',
-            key = 'mde_sp'
+        mde_design = st.number_input(
+            'Mínimo Efeito Detectável (%)', 
+            help = 'Deve ser positivo.',
+            key = 'mde_design'
             )
         st.write('\n')
-        is_absolute_variation_sp = st.toggle('Variação Absoluta', True, key = 'var_sp')
+        is_absolute_variation_design = st.toggle('Variação Absoluta', True, key = 'var_design')
     
-    with right_sp.container():
-        alpha_sp = st.slider('Nível de Significância (%)', 1, 10, 5, key = 'alpha_sp')
-        power_sp = st.slider('Poder Estatístico (%)', 80, 99, key = 'power_sp')
-        is_two_tailed_sp = st.toggle('Teste Bicaudal', True, key = 'tail_sp')
+    with ex_design_right.container():
+        alpha_design = st.slider('Nível de Significância (%)', 1, 10, 5, key = 'alpha_design')
+        power_design = st.slider('Poder Estatístico (%)', 80, 99, key = 'power_design')
+        is_two_tailed_design = st.toggle('Teste Bicaudal', True, key = 'tail_design')
         st.write('\n\n')
     _, sample_size, _ = st.columns(3)
 
     # A computar inputs para cálculo de tamanho de amostra ideal
-    try:    
-        if sample_size.button('Calcular Tamanho Amostral'):
-            ab_exp_sp = ABLisk(bcr_sp, mde_sp, alpha = alpha_sp, 
-                                            power = power_sp, is_absolute_variation = is_absolute_variation_sp,
-                                           is_two_tailed = is_two_tailed_sp)
-            min_sample_size = ab_exp_sp.evan_miller_sample_size()
+    if sample_size.button('Calcular Tamanho Amostral'):
+        try:  
+            ab_test_design = ABLisk(
+                bcr_design, 
+                mde_design, 
+                alpha = alpha_design,
+                power = power_design,
+                is_absolute_variation = is_absolute_variation_design,
+                is_two_tailed = is_two_tailed_design
+                )
+            min_sample_size = ab_test_design.evan_miller_sample_size()
             
             # A apresentar a informação relativa ao tamanho amostral
             if type(min_sample_size) is int: 
-                message_sp_1 = 'Deves conduzir o teu experimento com, no mínimo,'
-                message_sp_2 = f' **{min_sample_size}** '
-                message_sp_3 = 'observações por variante.'
-                message_sp = message_sp_1 + message_sp_2 + message_sp_3
+                msg_design = st.secrets['summary']['design']['pt'].format(min_sample_size)
                 st.write('')
                 st.write_stream(
                     stream_design_recommendation(
                         xplendid_div_body,
-                        message_sp
+                        msg_design
                         )
                     )
-                
-                # Salvando os valores na sessão
                 st.session_state.update({
                     'min_sample_size': min_sample_size,
-                    'message_sp': message_sp
+                    'msg_design': msg_design
                             })
             else:
-                st.toast(inputs_sp)                
-    except:
-        st.toast(hint)
+                st.toast(design_error_msg)                
+        except:
+            st.toast(global_error_msg)
   
     
 
@@ -195,92 +189,127 @@ with st.expander('Analise os seus resultados ↴'):
     for _ in range(4):
         st.write('\n')
         
-    # Container de design do experimento     
+    # Container dedicado ao design do experimento     
     ## Lado esquerdo
-    left_xp_sp, _, right_xp_sp = st.columns([1.5, .5, 1.5])
-    with left_xp_sp.container():
-        bcr_xp = st.number_input(
-            'Taxa de Conversão de Referência (%)', None, key = 'bcr_xp',
+    ex_analytics_upperleft, _, ex_analytics_upperright = st.columns([1.5, .5, 1.5])
+    with ex_analytics_upperleft.container():
+        bcr_analytics = st.number_input(
+            'Taxa de Conversão de Referência (%)',
+            None,
+            key = 'bcr_analytics',
             help = 'Varia de 0 a 100.'
             )
         st.write('')
-        mde_xp = st.number_input(
-            'Mínima Diferença Esperada (%)', None, key = 'mde_xp',
-            help = 'Deve ser positiva.'
+        mde_analytics = st.number_input(
+            'Mínimo Efeito Detectável (%)',
+            None,
+            key = 'mde_analytics',
+            help = 'Deve ser positivo.'
             )
         st.write('\n')
-        is_absolute_variation_xp = st.toggle(
-            'Variação Absoluta', True, key = 'var_xp'
+        is_absolute_variation_analytics = st.toggle(
+            'Variação Absoluta',
+            True,
+            key = 'var_analytics'
             )    
     
     ## Lado direito
-    with right_xp_sp.container():
-        alpha_xp = st.slider(
-            'Nível de Significância (%)', 1, 10, key = 'alpha_xp',
+    with ex_analytics_upperright.container():
+        alpha_analytics = st.slider(
+            'Nível de Significância (%)',
+            1,
+            10,
+            key = 'alpha_analytics',
             )
-        power_xp = st.slider(
-            'Poder Estatístico (%)', 80, 99, key = 'power_xp'
+        power_analytics = st.slider(
+            'Poder Estatístico (%)',
+            80, 
+            99, 
+            key = 'power_analytics'
             )
-        is_two_tailed_xp = st.toggle(
-            'Teste Bicaudal', True, key = 'tail_xp')
+        is_two_tailed_analytics = st.toggle(
+            'Teste Bicaudal', 
+            True,
+            key = 'tail_analytics'
+            )
 
-    # Container do experimento       
+    # Container dedicado aos resultados experimento       
     ## Lado esquerdo
     st.write('')
-    left_xp, _, middle_xp, _, right_xp = st.columns([1.5, .5, 1.5, .5, 2])
-    with left_xp.container():
+    ex_analytics_lowerleft, _, ex_analytics_lowermiddle, _, ex_analytics_lowerright = st.columns([1.5, .5, 1.5, .5, 2])
+    with ex_analytics_lowerleft.container():
         st.markdown(
             xplendid_bold_italic.replace('xplendid', 'Controlo'), 
-            unsafe_allow_html = True)
-        n_ctrl = st.number_input(
-            '_Tamanho da Amostra_', 0, key = 'nctrl', help = 'Deve ser um inteiro positivo.'
+            unsafe_allow_html = True
             )
-        p_ctrl = st.number_input(
-            '_Convertidos_', key = 'pctrl', help = 'Varia de 0 a 1.'
+        nctrl = st.number_input(
+            '_Tamanho da Amostra_',
+            0,
+            key = 'nctrl',
+            help = 'Deve ser um inteiro positivo.'
+            )
+        pctrl = st.number_input(
+            '_Convertidos_', 
+            key = 'pctrl',
+            help = 'Varia de 0 a 1.'
             )
         
     ## Centro do container
-    with middle_xp.container():
+    with ex_analytics_lowermiddle.container():
            st.markdown(
                xplendid_bold_italic.replace('xplendid', 'Efeito'), 
-               unsafe_allow_html = True)
-           n_trmt = st.number_input(
-               'Tamanho da Amastra', 0, key = 'ntrmt', label_visibility = 'hidden'
+               unsafe_allow_html = True
                )
-           p_trmt = st.number_input(
-               'Convertidos', key = 'ptrmt', label_visibility = 'hidden'
+           ntrmt = st.number_input(
+               'Tamanho da Amastra',
+                0,
+                key = 'ntrmt',
+                label_visibility = 'hidden'
+               )
+           ptrmt = st.number_input(
+               'Convertidos', 
+               key = 'ptrmt',
+               label_visibility = 'hidden'
                )
            
     ## Container direito
-    with right_xp.container():
+    with ex_analytics_lowerright.container():
         for _ in range(2):
             st.write('')
-        plot_xp = st.radio(
-            'Gráfico', ['Curvas de Distribuição', 'Intervalos de Confiança']
-            )  
+        plot_analytics_pt = st.radio(
+            'Gráfico', 
+            ['KDE', 'Barras de Erro']
+            ) 
+        plot_analytics = 'Error Bars' if plot_analytics_pt == 'Barras de Erro' else plot_analytics_pt         
      
     # Inicialização da sessão para visualização de resultados
-    if 'exp_results_button' not in st.session_state:
-        st.session_state.exp_results_button = False
+    if 'experiment_results_button' not in st.session_state:
+        st.session_state.experiment_results_button = False
         
     ## Botão para visualização de resultados
-    exp_results, _, _ = st.columns([.3, 1.5, 1.5])    
+    experiment_results, _, _ = st.columns([.3, 1.5, 1.5])    
     
-    ## Etapas a executar caso o botão seje premido
-    if exp_results.button('▷', help = 'Ver resultados!'):  
-        st.session_state.exp_results_button = True
+    ## Etapas a executar caso o botão seja premido
+    if experiment_results.button('▷', help = 'Ver resultados!'):  
+        st.session_state.experiment_results_button = True
         
     ## A manter a sessão aberta
-    if st.session_state.exp_results_button:  
+    if st.session_state.experiment_results_button:  
         success = True
         try:
             ## A computar resultados
-            ab_experiment_xp = ABLisk(bcr_xp, mde_xp, alpha = alpha_xp, 
-                                            power = power_xp, is_absolute_variation = is_absolute_variation_xp,
-                                           is_two_tailed = is_two_tailed_xp
-                                           )                 
+            ab_test_analytics = ABLisk(
+                bcr_analytics, 
+                mde_analytics,
+                alpha = alpha_analytics,
+                power = power_analytics,
+                is_absolute_variation = is_absolute_variation_analytics,
+                is_two_tailed = is_two_tailed_analytics
+                )                 
         except:
-            st.toast(inputs_sp)
+            if not st.session_state.get('design_error_shown', False):
+                st.toast(design_error_msg)
+                st.session_state['design_error_shown'] = True
             success = False
         
         ## Spinner para processar a apresentação de resultados       
@@ -290,20 +319,39 @@ with st.expander('Analise os seus resultados ↴'):
         # A tentar mostrar resultados após inserção de parâmetros de design
         if success:            
             try:
-                ## A criar gráfico com o título em português
-                fig = ab_experiment_xp.get_experiment_results(
-                    n_ctrl, p_ctrl, n_trmt, p_trmt, plot_ = plot_xp, lang = 'pt'
+                ## A criar gráfico com o título e legendas em português
+                fig = ab_test_analytics.get_experiment_results(
+                    nctrl,
+                    pctrl, 
+                    ntrmt,
+                    ptrmt, 
+                    plot_ = plot_analytics
                     )
+                if plot_analytics == 'KDE':
+                    fig.data[0].name = 'Controlo'
+                    fig.data[2].name = 'Efeito'
+                    fig.data[4].name = 'MED'
+                else:
+                    fig.data[0].name = 'Controlo'
+                    fig.data[1].name = 'Efeito'
+                    fig.data[3].name = 'MED'
                 fig.update_layout(title = dict(text = 'Resultados do Experimento'))
-                
+                                
                 ## A gerar recomendação
-                results_summary = ab_experiment_xp.get_experiment_results(
-                                n_ctrl, p_ctrl, n_trmt, p_trmt, plot_ = None, lang = 'pt'
+                results_summary_en = ab_test_analytics.get_experiment_results(
+                                nctrl, 
+                                pctrl, 
+                                ntrmt,
+                                ptrmt, 
+                                plot_ = None,
+                                full_summary = False
                                 )
+                results_summary = pt_recommendation(results_summary_en)
                 
                 # Notificação para o caso de se ter 0 convertidos
-                if 0 in [p_ctrl, p_trmt]:
-                    st.toast(zero_conv_hint)
+                if 0 in [pctrl, ptrmt] and not st.session_state.get('zero_warning_shown', False):
+                    st.toast(zero_conversions_warning)
+                    st.session_state['zero_warning_shown'] = True
                     
                 ## Divisor e spinner para apresentar resultados 
                 st.write('')
@@ -313,17 +361,17 @@ with st.expander('Analise os seus resultados ↴'):
                 st.plotly_chart(fig, config = {'displayModeBar': False})
                 
                 ## Secção de download e visualização de recomendações
-                _, download_col, sum_col, _ = st.columns([4, 1.5, 1.5, 4])
+                _, download_col, summary_col, _ = st.columns([4, 1.5, 1.5, 4])
                 
                 # Tornando o gráfico descarregável
                 img_buf = create_plot(fig)        
-                filename = f"resultados_experimento_{plot_xp.lower().replace(' ', '')}.png"
+                filename = f"resultados_experimento_{plot_analytics.lower().replace(' ', '')}.png"
                 
                 ## Injecção do botão de download
                 download_col.download_button('📥', data = img_buf, file_name = filename)
                 
                 ## Injecting view recommendation button
-                if sum_col.button('💬', help = 'Ver resltados e recomendação'):
+                if summary_col.button('💬', help = 'Ver resultados e recomendação'):
                     
                     ## Divisor para apresentação de recomendações
                     st.markdown(xplendid_div_body, unsafe_allow_html = True)
@@ -331,10 +379,7 @@ with st.expander('Analise os seus resultados ↴'):
                     ## A apresentar resultados e recomendações
                     print_experiment_summary(
                         results_summary[0], 
-                        stream_experiment_recommendations(
-                            results_summary[1], 
-                            results_summary[2]
-                            )
+                        stream_experiment_recommendations(results_summary[1], results_summary[2])
                         )
                     
                     # A salvar o resumo na sessão
@@ -344,16 +389,17 @@ with st.expander('Analise os seus resultados ↴'):
                     _, _, close_col, _ = st.columns([4, 4, .3, .2])
                     if close_col.button('↖'):
                                  st.rerun()
-            except:
-                st.write(plot_error_hint)
+            except Exception as e:
+                st.write(e)
+                #st.write(plot_error_msg)
         else:
             pass
     
 
     
 # Secção de feedback
-chat_col, open_chat_col, _, fb_col = st.columns([.6, .2, 2.1, 1.7])
-with fb_col.container():
+chat_col, open_chat_col, _, feedback_col = st.columns([.6, .2, 2.1, 1.7])
+with feedback_col.container():
     for _ in range(4):
         st.write('')
     st.markdown(f'Avalie o **{xplendid_bold_italic}** agora!', unsafe_allow_html = True) 
@@ -402,8 +448,8 @@ def show_dialog(session_state):
         with messages.chat_message(msg['role']):
             st.markdown(msg['content'])                     
 
-ask_ai_animation = 'https://i.postimg.cc/CxCzV5LD/pergunte-a-ia.gif'
-chat_col.markdown(f"<img src = {ask_ai_animation}>", unsafe_allow_html = True)
+askai_gif = 'https://i.postimg.cc/CxCzV5LD/pergunte-a-ia.gif'
+chat_col.markdown(f"<img src = {askai_gif}>", unsafe_allow_html = True)
 if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 

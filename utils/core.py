@@ -1,6 +1,7 @@
 # Dependencies
 import plotly.io as pio
 import streamlit as st
+import numpy as np
 import time
 import io
 
@@ -29,3 +30,17 @@ def print_experiment_summary(sum_0, stream_words_xp): # Prints results summary
     st.write('💡')
     st.text(sum_0)            
     st.write_stream(stream_words_xp)
+
+
+# Function for presenting experiment results summary in portuguese
+def pt_recommendation(en_results_summary):
+    recomendacoes_pt = st.secrets['pt_recommendation']['analytics']
+    _, results_df, text1_en = en_results_summary
+    idx = np.argmax(['Given' in text1_en, 'Keep' in text1_en, 'There' in text1_en])
+    recomendacao = recomendacoes_pt[idx]
+    text0 = (
+        f"\n\n[2] Recomendação:\n{recomendacao}"
+        "\n\n\n\n*Nota: Esta recomendação não assume que a experiência tenha sido desenhada corretamente."
+          )
+    text1 = "\n\n\n\n*Nota: Esta recomendação não assume que a experiência tenha sido desenhada corretamente."
+    return text0, results_df, text1
