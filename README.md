@@ -6,6 +6,7 @@
 <h3 align="center">
     🧪 Try **xplendid** [here](https://xplendid.streamlit.app/). </a>
 </h3>
+---
 
 
 <p align="center">
