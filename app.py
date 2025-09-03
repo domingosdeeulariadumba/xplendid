@@ -1,11 +1,14 @@
-# Dependencies
-import streamlit as st
-from utils.ablisk import ABLisk
-from utils.core import stream_design_recommendation, create_plot, \
-    stream_experiment_recommendations, print_experiment_summary
-from utils.ai import ask_xplendid
+## Dependências
 import time
 import joblib as jbl
+import streamlit as st
+from ablisk import ABLisk
+from utils.ai import ask_xplendid
+from utils.exceptions import stats_exceptions
+from utils.core import (
+    stream_design_recommendation, create_plot, 
+    stream_experiment_recommendations, print_experiment_summary
+)
 
 
 # Title, icon, and layout
@@ -108,77 +111,68 @@ xplendid_div_fb = '''
 <div style = 'width: 58%; height: 2px; background-color:  #ff66c4'></div>
 '''
             
-# Toast text for exception handling
-hint = '❌ Input error! Hover the mouse over ❔ icon for help.'
-
-# Toast for checking sample size inputs
-inputs_sp = '🚨 Invalid input(s)! Check your **BCR** or **MDE** values.'
-
-# Toast for conversions if it is 0
-zero_conv_hint = '🔔 Received **_:red[0]_** as input(s) for **Conversions**. _Is it ok?_'
-
-# Toast for notifying about analysis resuls unavailability
-plot_error_hint = ':( No results to display! Insert valid inputs for **:red[Sample Size]** and :red[**Conversions**.]'
+# Exceptions from design and experiment analysis
+global_error_msg, design_error_msg, zero_conversions_warning, plot_error_msg = stats_exceptions()
 
 # Sample size calculator expander
 with st.expander('Design your experiment ↴'):
     for _ in range(5):
         st.write('\n')
-    left_sp, _, right_sp = st.columns([1.5, .5, 1.5])
-    with left_sp.container():
-        bcr_sp = st.number_input(
+    ex_design_left, _, ex_design_right = st.columns([1.5, .5, 1.5])
+    with ex_design_left.container():
+        bcr_design = st.number_input(
             'Baseline Conversion Rate (%)', 
             help = 'Spans from 0 to 100.', 
-            key = 'bcr_sp'
+            key = 'bcr_design'
             )
         
         st.write('\n')
-        mde_sp = st.number_input(
+        mde_design = st.number_input(
             'Minimum Detectable Effect (%)',
             help = 'Must be positive.',
-            key = 'mde_sp'
+            key = 'mde_design'
             )
         st.write('\n')
-        is_absolute_variation_sp = st.toggle('Absolute Variation', True, key = 'var_sp')
+        is_absolute_variation_design = st.toggle('Absolute Variation', True, key = 'var_design')
     
-    with right_sp.container():
-        alpha_sp = st.slider('Significance Level (%)', 1, 10, 5, key = 'alpha_sp')
-        power_sp = st.slider('Power (%)', 80, 99, key = 'power_sp')
-        is_two_tailed_sp = st.toggle('Two-Tailed Test', True, key = 'tail_sp')
+    with ex_design_right.container():
+        alpha_design = st.slider('Significance Level (%)', 1, 10, 5, key = 'alpha_design')
+        power_design = st.slider('Power (%)', 80, 99, key = 'power_design')
+        is_two_tailed_design = st.toggle('Two-Tailed Test', True, key = 'tail_design')
         st.write('\n\n')
     _, sample_size, _ = st.columns(3)
 
     # Computing the user inputs
-    try:    
-        if sample_size.button('Calculate sample size'):
-            ab_exp_sp = ABLisk(bcr_sp, mde_sp, alpha = alpha_sp, 
-                                            power = power_sp, is_absolute_variation = is_absolute_variation_sp,
-                                           is_two_tailed = is_two_tailed_sp)
-            min_sample_size = ab_exp_sp.evan_miller_sample_size()
+    if sample_size.button('Calculate sample size'):
+        try:           
+            ab_test_design = ABLisk(
+                bcr_design, 
+                mde_design, 
+                alpha = alpha_design, 
+                power = power_design, 
+                is_absolute_variation = is_absolute_variation_design, 
+                is_two_tailed = is_two_tailed_design
+                )
+            min_sample_size = ab_test_design.evan_miller_sample_size()
             
             # Presenting the sample size info
-            if type(min_sample_size) is int: 
-                message_sp_1 = 'You should conduct your experiment with at least'
-                message_sp_2 = f' **{min_sample_size}** '
-                message_sp_3 = 'observations per variant.'
-                message_sp = message_sp_1 + message_sp_2 + message_sp_3
+            if isinstance(min_sample_size, int): 
+                msg_design = st.secrets['summary']['design']['en'].format(min_sample_size)
                 st.write('')
                 st.write_stream(
                     stream_design_recommendation(
                         xplendid_div_body, 
-                        message_sp
+                        msg_design
                         )
                     )
-                
-                # Saving values from the session state
                 st.session_state.update({
                     'min_sample_size': min_sample_size,
-                    'message_sp': message_sp
+                    'msg_design': msg_design
                             })
             else:
-                st.toast(inputs_sp)                
-    except:
-        st.toast(hint)
+                st.toast(design_error_msg)                
+        except:
+            st.toast(global_error_msg)
   
     
 
@@ -197,90 +191,124 @@ with st.expander('Analyse your results ↴'):
         
     # Design container      
     ## Left Container
-    left_xp_sp, _, right_xp_sp = st.columns([1.5, .5, 1.5])
-    with left_xp_sp.container():
-        bcr_xp = st.number_input(
-            'Baseline Conversion Rate (%)', None, key = 'bcr_xp',
+    ex_analytics_upperleft, _, ex_analytics_upperright = st.columns([1.5, .5, 1.5])
+    with ex_analytics_upperleft.container():
+        bcr_analytics = st.number_input(
+            'Baseline Conversion Rate (%)', 
+            None, 
+            key = 'bcr_analytics',
             help = 'Spans from 0 to 100.'
             )
         st.write('')
-        mde_xp = st.number_input(
-            'Minimum Detectable Effect (%)', None, key = 'mde_xp',
+        mde_analytics = st.number_input(
+            'Minimum Detectable Effect (%)',
+            None, 
+            key = 'mde_analytics',
             help = 'Must be positive.'
             )
         st.write('\n')
-        is_absolute_variation_xp = st.toggle(
-            'Absolute Variation', True, key = 'var_xp'
+        is_absolute_variation_analytics = st.toggle(
+            'Absolute Variation', 
+            True, 
+            key = 'var_analytics'
             )   
 
     ## Right container
-    with right_xp_sp.container():
-        alpha_xp = st.slider(
-            'Significance Level (%)', 1, 10, key = 'alpha_xp',
+    with ex_analytics_upperright.container():
+        alpha_analytics = st.slider(
+            'Significance Level (%)',
+            1, 
+            10, 
+            key = 'alpha_analytics'
             )
-        power_xp = st.slider(
-            'Power (%)', 80, 99, key = 'power_xp'
+        power_analytics = st.slider(
+            'Power (%)', 
+            80, 
+            99, 
+            key = 'power_analytics'
             )
-        is_two_tailed_xp = st.toggle(
-            'Two-Tailed Test', True, key = 'tail_xp')
+        is_two_tailed_analytics = st.toggle(
+            'Two-Tailed Test',
+            True, 
+            key = 'tail_analytics'
+            )
 
     # Experiment container        
     ## Left container
     st.write('')
-    left_xp, _, middle_xp, _, right_xp = st.columns([1.5, .5, 1.5, .5, 2])
-    with left_xp.container():
+    ex_analytics_lowerleft, _, ex_analytics_lowercenter, _, ex_analytics_lowerright = st.columns([1.5, .5, 1.5, .5, 2])
+    with ex_analytics_lowerleft.container():
         st.markdown(
             xplendid_bold_italic.replace('xplendid', 'Control'), 
-            unsafe_allow_html = True)
-        n_ctrl = st.number_input(
-            '_Sample Size_', 0, key = 'nctrl', help = 'Must be positive integer.'
+            unsafe_allow_html = True
             )
-        p_ctrl = st.number_input(
-            '_Conversions_', key = 'pctrl', help = 'Spans from 0 to 1.'
+        nctrl = st.number_input(
+            '_Sample Size_', 
+            0,
+            key = 'nctrl', 
+            help = 'Must be positive integer.'
+            )
+        pctrl = st.number_input(
+            '_Conversions_', 
+            key = 'pctrl', 
+            help = 'Spans from 0 to 1.'
             )
         
     ## Middle container
-    with middle_xp.container():
+    with ex_analytics_lowercenter.container():
            st.markdown(
                xplendid_bold_italic.replace('xplendid', 'Treatment'), 
-               unsafe_allow_html = True)
-           n_trmt = st.number_input(
-               'Sample Size', 0, key = 'ntrmt', label_visibility = 'hidden'
+               unsafe_allow_html = True
                )
-           p_trmt = st.number_input(
-               'Conversions', key = 'ptrmt', label_visibility = 'hidden'
+           ntrmt = st.number_input(
+               'Sample Size', 
+               0,
+               key = 'ntrmt', 
+               label_visibility = 'hidden'
+               )
+           ptrmt = st.number_input(
+               'Conversions', 
+               key = 'ptrmt', 
+               label_visibility = 'hidden'
                )
            
     ## Right container
-    with right_xp.container():
+    with ex_analytics_lowerright.container():
         for _ in range(2):
             st.write('')
-        plot_xp = st.radio(
-            'Chart Type', ['KDE', 'Confidence Intervals']
+        plot_analytics = st.radio(
+            'Chart Type',
+            ['KDE', 'Error Bars']
             )  
     
     # Initializing the session state after viewing results
-    if 'exp_results_button' not in st.session_state:
-        st.session_state.exp_results_button = False
+    if 'experiment_results_button' not in st.session_state:
+        st.session_state.experiment_results_button = False
         
     ## Results button
-    exp_results, _, _ = st.columns([.3, 1.5, 1.5])    
+    experiment_results, _, _ = st.columns([.3, 1.5, 1.5])    
     
     ## Tasks if option to get results is triggered
-    if exp_results.button('▷', help = 'Get results!'):  
-        st.session_state.exp_results_button = True
+    if experiment_results.button('▷', help = 'Get results!'):  
+        st.session_state.experiment_results_button = True
         
     ## Keeping the session open
-    if st.session_state.exp_results_button:  
+    if st.session_state.experiment_results_button:  
         success = True
         try:
             ## Compute design inputs
-            ab_experiment_xp = ABLisk(bcr_xp, mde_xp, alpha = alpha_xp, 
-                                            power = power_xp, is_absolute_variation = is_absolute_variation_xp,
-                                           is_two_tailed = is_two_tailed_xp
+            ab_test_analytics = ABLisk(
+                bcr_analytics,
+                mde_analytics,
+                alpha = alpha_analytics,
+                power = power_analytics, 
+                is_absolute_variation = is_absolute_variation_analytics,
+                is_two_tailed = is_two_tailed_analytics
                                            )           
         except:
-            st.toast(inputs_sp)
+            if not st.session_state.get('design_error_shown', False):
+                st.toast(design_error_msg)
+                st.session_state['design_error_shown'] = True
             success = False
         
         ## A spinner for procesing the plot display       
@@ -291,18 +319,28 @@ with st.expander('Analyse your results ↴'):
         if success:            
             try:
                 ## Computing results for plotting 
-                fig = ab_experiment_xp.get_experiment_results(
-                    n_ctrl, p_ctrl, n_trmt, p_trmt, plot_ = plot_xp
+                fig = ab_test_analytics.get_experiment_results(
+                    nctrl,
+                    pctrl,
+                    ntrmt,
+                    ptrmt,
+                    plot_ = plot_analytics
                     )
                 
                 ## Computing recommendations
-                results_summary = ab_experiment_xp.get_experiment_results(
-                                n_ctrl, p_ctrl, n_trmt, p_trmt, plot_ = None
+                results_summary = ab_test_analytics.get_experiment_results(
+                                nctrl,
+                                pctrl, 
+                                ntrmt, 
+                                ptrmt, 
+                                plot_ = None, 
+                                full_summary = False
                                 )
                 
                 # Toast for notifying 0 as input of conversions
-                if 0 in [p_ctrl, p_trmt]:
-                    st.toast(zero_conv_hint)
+                if 0 in [pctrl, ptrmt] and not st.session_state.get('zero_warning_shown', False):
+                    st.toast(zero_conversions_warning)
+                    st.session_state['zero_warning_shown'] = True
                     
                 ## Dotted divider and spinner for procesing the plot display 
                 st.write('')
@@ -312,29 +350,25 @@ with st.expander('Analyse your results ↴'):
                 st.plotly_chart(fig, config = {'displayModeBar': False})
                 
                 ## Download and and view recommendation buttons
-                _, download_col, sum_col, _ = st.columns([4, 1.5, 1.5, 4])
+                _, download_col, summary_col, _ = st.columns([4, 1.5, 1.5, 4])
                 
                 ## Making the plot downloadable
                 img_buf = create_plot(fig)        
-                filename = f"experiment_results_{plot_xp.lower().replace(' ', '')}.png"
+                filename = f"experiment_results_{plot_analytics.lower().replace(' ', '')}.png"
                 
                 ## Injecting download button
                 download_col.download_button('📥', data = img_buf, file_name = filename)
                 
                 ## Injecting view recommendation button
-                if sum_col.button('💬', help = 'View results and recommendation'):
+                if summary_col.button('💬', help = 'View results and recommendation'):
                     
                     ## Dotted divider for presenting recommendations 
                     st.markdown(xplendid_div_body, unsafe_allow_html = True)
                     
-                    ## Presenting results summary and recommendations
-                    
+                    ## Presenting results summary and recommendations                    
                     print_experiment_summary(
                         results_summary[0], 
-                        stream_experiment_recommendations(
-                            results_summary[1], 
-                            results_summary[2]
-                            )
+                        stream_experiment_recommendations(results_summary[1], results_summary[2])
                         )
                     
                     # Storing results summary in session state
@@ -344,17 +378,15 @@ with st.expander('Analyse your results ↴'):
                     _, _, close_col, _ = st.columns([4, 4, .3, .2])
                     if close_col.button('↖'):
                                  st.rerun()
-            except Exception as e:
-                st.error(f'Error: {e}')
-                #st.write(plot_error_hint)
-                
+            except:
+                st.write(plot_error_msg)                
         else:
             pass
     
   
 # Feedback section
-chat_col, open_chat_col, _, fb_col = st.columns([.6, .2, 2.05, 1.5])
-with fb_col.container():
+chat_col, open_chat_col, _, feedback_col = st.columns([.6, .2, 2.05, 1.5])
+with feedback_col.container():
     for _ in range(4):
         st.write('')
     st.markdown(f'Rate **{xplendid_bold_italic}** now!', unsafe_allow_html = True) 
@@ -402,8 +434,8 @@ def show_dialog(session_state):
         with messages.chat_message(msg['role']):
             st.markdown(msg['content'])                     
 
-ask_ai_animation = 'https://i.postimg.cc/50KXkr9R/ask-ai.gif'
-chat_col.markdown(f"<img src = '{ask_ai_animation}'>", unsafe_allow_html = True)
+askai_gif = 'https://i.postimg.cc/50KXkr9R/ask-ai.gif'
+chat_col.markdown(f"<img src = '{askai_gif}'>", unsafe_allow_html = True)
 if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 
