@@ -473,25 +473,17 @@ icons_markdown = f'''
 <div style = '{container_style}'>
         </a>
         <a href = 'https://ko-fi.com/domingosdeeulariadumba' target = '_blank' style = 'text-decoration: none;'>
-            <img src = '{kofi_icon_url}' 
-                 alt = 'Domingos' ko-fi' 
-                 height = '{height_}' width = '{height_}'/>
+            <img src = '{kofi_icon_url}' alt = 'Domingos' ko-fi'bheight = '{height_}' width = '{height_}'/>
         </a>
         </a>
         <a href = 'https://linktr.ee/domingosdeeulariadumba' target = '_blank' style = 'text-decoration: none;'>
-            <img src = '{linktree_icon_url}' 
-                 alt = 'Domingos' Linktree' 
-                 height = '{height_}' width = '{height_}'/>
+            <img src = '{linktree_icon_url}' alt = 'Domingos' Linktree' height = '{height_}' width = '{height_}'/>
         </a>
         <a href = 'https://github.com/domingosdeeulariadumba' target = '_blank' style = 'text-decoration: none margin:;'>
-            <img src = '{github_icon_url}' 
-                 alt = "Domingos' GitHub" 
-                 height = '{height_}' width = '{height_}' />
+            <img src = '{github_icon_url}' alt = "Domingos' GitHub" height = '{height_}' width = '{height_}' />
         </a>
         <a href = 'https://linkedin.com/in/domingosdeeulariadumba/' target = '_blank' style = 'text-decoration: none;'>
-            <img src = '{linkedin_icon_url}' 
-                 alt = "Domingos' LinkedIn" 
-                 height = '{height_}' width = '{height_}' />
+            <img src = '{linkedin_icon_url}' alt = "Domingos' LinkedIn" height = '{height_}' width = '{height_}' />
         </a>
 </div>
 '''
@@ -502,9 +494,9 @@ with middle.container(border = False):
     st.markdown(icons_markdown, unsafe_allow_html = True)
     
 # Footer stuff
-footer_markdown = '''<div style = 'text-align: center; color: #040404'>
-Created by <b>Domingos de Eulária Dumba</b>
- © 2025.
-</div>'''
+footer_markdown = '''
+<div style = 'text-align: center; color: #040404'>
+Created by <b>Domingos de Eulária Dumba</b> © 2025.</div>
+'''
 
 st.markdown(footer_markdown, unsafe_allow_html = True)
