@@ -10,7 +10,7 @@
 
 
 <p align="center">
-    <a href="https://xplendid.streamlit.app/"><img src="https://i.postimg.cc/tCgWRj7z/xplendid-demo.gif" width=700></a>
+    <a href="https://xplendid.streamlit.app/"><img src="https://github.com/domingosdeeulariadumba/xplendid/blob/main/demos/xplendid_demo.gif" width=700></a>
 </p>
 
 <br>
