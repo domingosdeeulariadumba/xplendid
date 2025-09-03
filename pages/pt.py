@@ -454,7 +454,6 @@ if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 
 
-
 # Secção de links    
 for i in range(8):
     st.write('')
@@ -512,8 +511,7 @@ icons_markdown = f'''
 # Centralização dos ícones
 _, middle, _ = st.columns([.5, .5, .5])
 with middle.container(border = False):
-    st.markdown(icons_markdown,
-                unsafe_allow_html = True)
+    st.markdown(icons_markdown, unsafe_allow_html = True)
     
 # Rodapé
 footer_markdown = '''<div style = 'text-align: center; color: #040404'>
