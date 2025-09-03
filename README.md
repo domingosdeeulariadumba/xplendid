@@ -18,14 +18,13 @@
 
 - 🤖 **AI-assisted recommendations**: get smart suggestions on test design, sample sizes, and metrics.  
 - 📊 **Interactive visualizations**: instantly see how your variants perform.  
-- ✔️ **Decision support**: understand whether your results are statistically significant.  
-- 🐍 **Python-native**: fully powered by the [ablisk](https://pypi.org/project/ablisk/) module, allowing programmatic test control.
+- ✔️ **Decision support**: understand whether your results are statistically significant.
 
 ---
 
 ## The `ablisk` Module
 
-**xplendid** has **[ablisk](https://pypi.org/project/ablisk/)** as its statistical engine, a Python module for designing, analysing, and making recommendations on A/B tests. Both **xplendid** and **ablisk** are heavily inspired by [Evan Miller's work](https://www.evanmiller.org/ab-testing/sample-size.html) on A/B testing and sample size calculations.
+**xplendid** has **[ablisk](https://pypi.org/project/ablisk/)** as its statistical engine, a Python module for A/B tests. Both **xplendid** and **ablisk** are heavily inspired by [Evan Miller's work](https://www.evanmiller.org/ab-testing/sample-size.html) on A/B testing and sample size calculations.
 
 If you want to run A/B tests directly in Python without using **xplendid**, you can install **ablisk** via pip:
 
