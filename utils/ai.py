@@ -4,7 +4,6 @@ from utils.exceptions import ai_exceptions
 from openai import OpenAI, RateLimitError, APIConnectionError
 
 
-
 # Function for loading AI-related credentials
 def load_credentials(): 
     api_keys, base_urls, models = tuple(

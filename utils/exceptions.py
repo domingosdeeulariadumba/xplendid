@@ -1,3 +1,4 @@
+# Exception messages for the app
 def stats_exceptions(lang = 'en'):
     if lang == 'en':
         global_error_msg = '❌ Input error! Hover the mouse over ❔ icon for help.'
@@ -10,6 +11,7 @@ def stats_exceptions(lang = 'en'):
         zero_conversions_warning = '🔔 Inseriu **_:red[0]_** como entrada em **Convertidos**. _Sem problemas?_'
         plot_error_msg = ':( Não é possível apresentar os resultados! Insira entradas válidas para **:red[Tamanho da Amostra]** e **:red[Convertidos:red]**.'    
     return global_error_msg, design_error_msg, zero_conversions_warning, plot_error_msg
+
 
 # Exception responses from AI assistant
 def ai_exceptions(lang):  

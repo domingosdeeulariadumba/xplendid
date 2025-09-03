@@ -1,4 +1,4 @@
-## Dependências
+## Dependencies
 import time
 import joblib as jbl
 import streamlit as st
