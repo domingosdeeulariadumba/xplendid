@@ -3,10 +3,9 @@
 **xplendid** is an AI-assisted web application for design, analysis and decison-making on A/B tests.
 
 ---
-
-### 🧪 Try xplendid out here: [https://xplendid.streamlit.app/](https://xplendid.streamlit.app/)
-
----
+<h3 align="center">
+    🧪 Try **xplendid** [here](https://xplendid.streamlit.app/). </a>
+</h3>
 
 
 <p align="center">
