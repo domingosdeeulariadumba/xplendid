@@ -1,3 +1,4 @@
-# AI data and credentials
+# AI data, credentials, and byte-compiled stuff
 data/
 .streamlit/secrets.toml
+__pycache__/
