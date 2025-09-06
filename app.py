@@ -2,6 +2,7 @@
 import time
 import joblib as jbl
 import streamlit as st
+from datetime import datetime
 from ablisk import ABLisk
 from utils.ai import ask_xplendid
 from utils.exceptions import stats_exceptions
@@ -494,9 +495,7 @@ with middle.container(border = False):
     st.markdown(icons_markdown, unsafe_allow_html = True)
     
 # Footer stuff
-footer_markdown = '''
-<div style = 'text-align: center; color: #040404'>
-© 2025 <b>Domingos de Eulária Dumba</b>.</div>
-'''
-
-st.markdown(footer_markdown, unsafe_allow_html = True)
+year = datetime.now().year
+footer_markdown = f'''
+<div style = 'text-align: center; color: #040404'>© {year} <b>Domingos de Eulária Dumba</b>.</div>
+'''st.markdown(footer_markdown, unsafe_allow_html = True)
