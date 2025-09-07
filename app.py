@@ -498,4 +498,5 @@ with middle.container(border = False):
 year = datetime.now().year
 footer_markdown = f'''
 <div style = 'text-align: center; color: #040404'>© {year} <b>Domingos de Eulária Dumba</b>.</div>
-'''st.markdown(footer_markdown, unsafe_allow_html = True)
+'''
+st.markdown(footer_markdown, unsafe_allow_html = True)
