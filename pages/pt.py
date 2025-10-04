@@ -154,7 +154,7 @@ with st.expander('Planeie o seu experimento ↴'):
                 is_absolute_variation = is_absolute_variation_design,
                 is_two_tailed = is_two_tailed_design
                 )
-            min_sample_size = ab_test_design.evan_miller_sample_size()
+            min_sample_size = ab_test_design.get_sample_size()
             
             # A apresentar a informação relativa ao tamanho amostral
             if type(min_sample_size) is int: 
