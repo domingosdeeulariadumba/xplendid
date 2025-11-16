@@ -436,7 +436,10 @@ def show_dialog(session_state):
             st.markdown(msg['content'])                     
 
 askai_gif = 'https://i.postimg.cc/50KXkr9R/ask-ai.gif'
-chat_col.markdown(f"<img src = '{askai_gif}'>", unsafe_allow_html = True)
+chat_col.markdown(
+    f"<img src='{askai_gif}' style='max-width:100%; height:auto;'>",
+    unsafe_allow_html = True
+    )
 if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 
