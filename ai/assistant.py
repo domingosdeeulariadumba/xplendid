@@ -1,9 +1,9 @@
 # Dependencies
 import streamlit as st
-from utils.auth import load_credentials
 from ai.rag import RAG
-from utils.exceptions import ai_exceptions
+from utils.auth import load_credentials
 from langchain.agents import create_agent
+from utils.exceptions import ai_exceptions
 from langchain.chat_models import init_chat_model
 from openai import OpenAI, RateLimitError, APIConnectionError
 
