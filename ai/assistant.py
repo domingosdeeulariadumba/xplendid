@@ -5,7 +5,7 @@ from utils.auth import load_credentials
 from langchain.agents import create_agent
 from utils.exceptions import ai_exceptions
 from langchain.chat_models import init_chat_model
-from openai import OpenAI, RateLimitError, APIConnectionError
+from openai import RateLimitError, APIConnectionError
 
 
 # A RAG-based tool to fetch relevant answers 
@@ -15,7 +15,7 @@ def fetch_answers(query: str):
      returns: top three relevant answers from the knowledge base
     '''
     rag = RAG()
-    retriever = emb.get_retriever()
+    retriever = rag.get_retriever()
     docs = retriever.invoke(query)
     return '\n\n'.join([doc.page_content for doc in docs])
 
