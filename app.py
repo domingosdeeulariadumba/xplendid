@@ -4,7 +4,7 @@ import joblib as jbl
 import streamlit as st
 from datetime import datetime
 from ablisk import ABLisk
-from utils.ai import ask_xplendid
+from ai.assistant import ask_xplendid
 from utils.exceptions import stats_exceptions
 from utils.core import (
     stream_design_recommendation, create_plot, 
