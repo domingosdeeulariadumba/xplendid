@@ -81,6 +81,6 @@ def ask_xplendid(session_state, lang = 'en'):
                 return ai_exception[0]
         except APIConnectionError:
                continue
-        except Exception as e:
-             return e       
+        except:
+             return ai_exception[-1]        
     return ai_exception[1]
