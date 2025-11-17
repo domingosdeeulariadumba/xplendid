@@ -72,7 +72,7 @@ def ask_xplendid(session_state, lang = 'en'):
             xplendid_agent = create_agent(
                 model = llm,
                 tools = [fetch_answers],
-                system_prompt = "You are a helpful assistant",
+                system_prompt = "You are xplendid's an AI assistant",
             )
             completion = xplendid_agent.invoke({'messages':[{'role':'user', 'content': messages}]})
             response = completion['messages'][-1].content
