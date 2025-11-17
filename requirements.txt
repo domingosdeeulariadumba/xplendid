@@ -10,5 +10,4 @@ joblib >= 1.4.2
 langchain >= 1.0.7
 huggingface-hub >= 0.33.4
 pymilvus >= 2.6.3
-
-
+langchain-milvus >= 0.3.0
