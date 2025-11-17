@@ -1,7 +1,6 @@
 # Dependencies
 import streamlit as st
 from utils.exceptions import ai_exceptions
-from openai import OpenAI, RateLimitError, APIConnectionError
 
 
 # Function for loading AI-related credentials

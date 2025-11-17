@@ -2,7 +2,6 @@
 import os
 import json
 import datetime
-import numpy as np
 import joblib as jbl
 from langchain_milvus import Milvus
 from utils.auth import load_credentials
