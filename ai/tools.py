@@ -6,8 +6,8 @@ from langchain_core.tools import Tool
 # RAG retriever
 def fetch_answers(query: str) -> str:
     '''Fetch answers from xplendid's knowledge base'''
-    emb = RAG()
-    retriever = emb.get_retriever()
+    rag = RAG()
+    retriever = rag.get_retriever()
     docs = retriever.invoke(query)
     return '\n\n'.join([doc.page_content for doc in docs])
 
@@ -36,8 +36,8 @@ def fetch_google_optimize(query: str) -> str:
 def get_tools() -> list[Tool]:
     '''Returns the list of available tools'''
     rag_description = (
-    'First, consult xplendid's knowledge base for the most accurate and relevant information. '
-    'Only if the knowledge base cannot provide a complete, clear, or clear answer should you use other sources.'
+    "First, consult xplendid's knowledge base for the most accurate and relevant information. "
+    "Only if the knowledge base cannot provide a complete, clear, or clear answer should you use other sources."
     )
     tools = [
         Tool(name = 'RAG_KB', func = fetch_answers, description = rag_description),

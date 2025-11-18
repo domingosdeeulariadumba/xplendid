@@ -32,12 +32,13 @@ class RAG:
     # A function for getting embeddings
     def get_embeddings(self):
         embeddings_path = 'data/qa_embeddings.joblib'
-        embeddings_ctime = os.path.getctime(embeddings_path)
+        embeddings_ctime = 2e-10 if not os.path.exists(embeddings_path) \
+                            else os.path.getctime(embeddings_path)
         last_update = datetime.datetime.fromtimestamp(embeddings_ctime).date()
         today = datetime.datetime.today().date()
         data = self.data
         
-        if ((today > last_update) and (today.day == 7)) or (not os.path.exists(embeddings_path)):
+        if (embeddings_ctime == 2e-10 or ((today > last_update) and (today.day == 7))):
             # Initializing the inference client and getting embeddings
             client = self.hf_client
             embeddings = [
@@ -107,5 +108,5 @@ class RAG:
         vector_field = 'embedding',
         text_field = 'answer'
         )
-        retriever = vectorstore.as_retriever(search_type = 'similarity', search_kwargs = {'k': 3})
+        retriever = vectorstore.as_retriever(search_type = 'similarity', search_kwargs = {'k': 5})
         return retriever
