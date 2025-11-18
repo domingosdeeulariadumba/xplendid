@@ -1,23 +1,11 @@
 # Dependencies
 import streamlit as st
-from ai.rag import RAG
+from ai.tools import get_tools
 from utils.auth import load_credentials
 from langchain.agents import create_agent
 from utils.exceptions import ai_exceptions
 from langchain.chat_models import init_chat_model
 from openai import RateLimitError, APIConnectionError
-
-
-# A RAG-based tool to fetch relevant answers 
-def fetch_answers(query: str):    
-    '''
-     query: the user question to be answered
-     returns: top three relevant answers from the knowledge base
-    '''
-    rag = RAG()
-    retriever = rag.get_retriever()
-    docs = retriever.invoke(query)
-    return '\n\n'.join([doc.page_content for doc in docs])
 
 
 # A function to provide AI responses 
@@ -62,9 +50,9 @@ def ask_xplendid(session_state, lang = 'en'):
       
     # Conversation setup
     credentials = load_credentials()
-    messages = [{'role': 'system', 'content': prompt}]
-    messages += session_state.chat_history
+    messages = [{'role': 'system', 'content': prompt}] + session_state.chat_history
     ai_exception = ai_exceptions(lang)
+    tools = get_tools()
     
     # Attempt to get response throught the xplendid agent
     for api_key, base_url, model in credentials: 
@@ -72,8 +60,7 @@ def ask_xplendid(session_state, lang = 'en'):
             llm = init_chat_model(model, api_key = api_key, base_url = base_url)
             xplendid_agent = create_agent(
                 model = llm,
-                tools = [fetch_answers],
-                system_prompt = "You are xplendid's an AI assistant"
+                tools = tools
             )
             completion = xplendid_agent.invoke({'messages': messages})
             response = completion['messages'][-1].content
