@@ -35,7 +35,7 @@ def ask_xplendid(session_state, lang = 'en'):
     results_summary = session_state.get('results_summary', 'Not Defined')
     results_and_recommendation = ''.join(str(i) for i in results_summary)
     text = st.secrets['prompt']['en'] if lang == 'en' else st.secrets['prompt']['pt'] 
-    prompt= text.format(
+    prompt = text.format(
         # Inputs and outputs of design section
         bcr_design, mde_design, alpha_design, power_design, 
         is_absolute_variation_design, is_two_tailed_design, 
@@ -49,18 +49,16 @@ def ask_xplendid(session_state, lang = 'en'):
         )
       
     # Conversation setup
-    credentials = load_credentials()
-    messages = [{'role': 'system', 'content': prompt}] + session_state.chat_history
-    ai_exception = ai_exceptions(lang)
     tools = get_tools()
-    
+    credentials = load_credentials()
+    ai_exception = ai_exceptions(lang)
+    messages = [{'role': 'system', 'content': prompt}] + session_state.chat_history
+      
     # Attempt to get response throught the xplendid agent
     for api_key, base_url, model in credentials: 
         try:
             llm = init_chat_model(model, api_key = api_key, base_url = base_url)
-            xplendid_agent = create_agent(
-                model = llm,
-                tools = tools
+            xplendid_agent = create_agent(model = llm, tools = tools
             )
             completion = xplendid_agent.invoke({'messages': messages})
             response = completion['messages'][-1].content
