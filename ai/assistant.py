@@ -66,15 +66,16 @@ def ask_xplendid(session_state, lang = 'en'):
     messages += session_state.chat_history
     ai_exception = ai_exceptions(lang)
     
+    # Attempt to get response throught the xplendid agent
     for api_key, base_url, model in credentials: 
         try:
             llm = init_chat_model(model, api_key = api_key, base_url = base_url)
             xplendid_agent = create_agent(
                 model = llm,
                 tools = [fetch_answers],
-                system_prompt = "You are xplendid's an AI assistant",
+                system_prompt = "You are xplendid's an AI assistant"
             )
-            completion = xplendid_agent.invoke({'messages':[{'role':'user', 'content': messages}]})
+            completion = xplendid_agent.invoke({'messages': messages})
             response = completion['messages'][-1].content
             return response
         except RateLimitError:
