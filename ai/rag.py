@@ -108,5 +108,5 @@ class RAG:
         vector_field = 'embedding',
         text_field = 'answer'
         )
-        retriever = vectorstore.as_retriever(search_type = 'similarity', search_kwargs = {'k': 5})
+        retriever = vectorstore.as_retriever(search_type = 'similarity', search_kwargs = {'k': 3})
         return retriever
