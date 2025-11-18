@@ -16,11 +16,10 @@ class RAG:
         self.hf_client = InferenceClient(token = self.hf_token, model = self.model)
         self.milvus_uri, self.milvus_token = load_credentials('milvus')
         self.connect_to_milvus = connections.connect(alias = 'default', uri = self.milvus_uri, token = self.milvus_token)
-        self.data = self.load_data()
         self.collection_name = 'xplendid_collection'
 
 
-    # A utility function to load the dataset
+    # Method to load the dataset
     def load_data(self):
         data = []
         with open('data/qa_dataset.jsonl', 'r', encoding = 'utf-8') as f:
@@ -29,14 +28,14 @@ class RAG:
         return data
 
 
-    # A function for getting embeddings
+    # Method for getting embeddings
     def get_embeddings(self):
         embeddings_path = 'data/qa_embeddings.joblib'
         embeddings_ctime = 2e-10 if not os.path.exists(embeddings_path) \
                             else os.path.getctime(embeddings_path)
         last_update = datetime.datetime.fromtimestamp(embeddings_ctime).date()
         today = datetime.datetime.today().date()
-        data = self.data
+        data = self.load_data()
         
         if (embeddings_ctime == 2e-10 or ((today > last_update) and (today.day == 7))):
             # Initializing the inference client and getting embeddings
@@ -51,12 +50,12 @@ class RAG:
         return embeddings
 
 
-    # A function to get the embedding for a query
+    # Method to get the embedding for a query
     def embed_query(self, text: str):
         return self.hf_client.feature_extraction(text = text)
     
 
-    # A function to get embeddings for documents
+    # Method to get embeddings for documents
     def embed_documents(self, texts: list[str]):
         return [self.hf_client.feature_extraction(text=t) for t in texts]
         
@@ -65,7 +64,7 @@ class RAG:
     def load_collection(self):
         # Getting embeddings and data
         embeddings = self.get_embeddings()
-        data = self.data
+        data = self.load_data()
 
         # Connecting to Milvus
         self.connect_to_milvus
