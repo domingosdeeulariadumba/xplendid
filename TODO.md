@@ -7,9 +7,9 @@
 - [X] Include a chatbot for providing assistance on results and experiments.
 - [X] Create a Vector Embeddings Database for Handling Effectively User Queries
 - [X] Create a QA Dataset to Support the Vector Embeddings Database
+- [X] Containerize the app
 ## In Progress / Pending
 - [ ] Refine the AI Assistant Prompt
 - [ ] Perform unit tests
-- [ ] Containerize the app
 - [ ] Design the application architecture
 - [ ] Add Bayesian features

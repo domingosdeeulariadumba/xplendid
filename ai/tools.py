@@ -35,12 +35,12 @@ def fetch_google_optimize(query: str) -> str:
 # Function for getting the list of tools
 def get_tools() -> list[Tool]:
     '''Returns the list of available tools'''
-    rag_desc= (
-    "First, consult xplendid's knowledge base for the most accurate and relevant information. "
-    "Only if the knowledge base cannot provide a complete, clear, or clear answer should you use other sources."
+    rag_description = (
+    'First, consult xplendid's knowledge base for the most accurate and relevant information. '
+    'Only if the knowledge base cannot provide a complete, clear, or clear answer should you use other sources.'
     )
     tools = [
-        Tool(name = 'RAG_KB', func = fetch_answers, description = rag_desc),
+        Tool(name = 'RAG_KB', func = fetch_answers, description = rag_description),
         Tool(name = 'EvanMiller', func = fetch_evan_miller, description = 'Statistical A/B testing guidance from Evan Miller.'),
         Tool(name = 'Optimizely', func = fetch_optimizely, description = 'Enterprise-level A/B testing tutorials from Optimizely.'),
         Tool(name = 'CXL', func = fetch_cxl, description = 'Experimentation methodology, sample size calculations, and growth insights.'),
