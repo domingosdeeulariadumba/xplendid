@@ -18,7 +18,7 @@
 
 - 🤖 **AI-assisted recommendations**: get smart suggestions on test design, sample sizes, and metrics.  
 - 📊 **Interactive visualizations**: instantly see how your variants perform.  
-- ✔️ **Decision support**: understand whether your results are statistically significant.
+- ✔️ **Decision support**: understand whether your results are statistically and practically significant.
 
 ---
 
