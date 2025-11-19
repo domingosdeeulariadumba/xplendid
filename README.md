@@ -9,7 +9,7 @@
 ---
 
 <p align="center">
-    <img src="asstets/demo.gif" width="700">
+    <img src="assets/demo.gif" width="700">
 </p>
 
 ---
