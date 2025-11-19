@@ -28,10 +28,6 @@ def fetch_vwo(query: str) -> str:
     '''Fetch answers from VWO's site'''
     return fetch_answers(f'site:vwo.com {query}')
 
-def fetch_google_optimize(query: str) -> str:
-    '''Fetch answers from Google Optimize's support site'''
-    return fetch_answers(f'site:support.google.com/optimize {query}')
-
 # Function for getting the list of tools
 def get_tools() -> list[Tool]:
     '''Returns the list of available tools'''
@@ -43,6 +39,5 @@ def get_tools() -> list[Tool]:
         Tool(name = 'Optimizely', func = fetch_optimizely, description = 'Enterprise-level A/B testing tutorials from Optimizely.'),
         Tool(name = 'CXL', func = fetch_cxl, description = 'Experimentation methodology, sample size calculations, and growth insights.'),
         Tool(name = 'VWO', func = fetch_vwo, description = 'Conversion optimization and testing frameworks guidance.'),
-        Tool(name = 'GoogleOptimize', func = fetch_google_optimize, description = 'Official Google Optimize experimentation guidance.')
         ]
     return tools
