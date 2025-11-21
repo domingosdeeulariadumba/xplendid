@@ -36,7 +36,7 @@
 - 📊 **Interactive visualizations**: instantly see how your variants perform.
 
 - ✔️ **Decision support**: understand whether your results are statistically and practically significant.
--  Below is presented the architecture:
+-  Below is the app architecture:
 ---
 
   
