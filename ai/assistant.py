@@ -9,7 +9,7 @@ from openai import RateLimitError, APIConnectionError
 
 
 # A function to provide AI responses 
-def ask_xplendid(session_state, lang = 'en'):       
+def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:       
     # Prompt setup
         ## Design data
     bcr_design = session_state.get('bcr_design', 'Not Defined')
