@@ -1,4 +1,5 @@
 # Dependencies
+import streamlit as st
 from ai.rag import RAG
 from langchain_core.tools import Tool
 
@@ -31,8 +32,7 @@ def fetch_vwo(query: str) -> str:
 # Function for getting the list of tools
 def get_tools() -> list[Tool]:
     '''Returns the list of available tools'''
-    rag_description = "First, consult xplendid's knowledge base for the most accurate and relevant information. " \
-        "Only if the knowledge base cannot provide a complete, clear, or clear answer should you use other sources."
+    rag_description = st.secrets['rag_description']
     tools = [
         Tool(name = 'RAG_KnowledgeBase', func = fetch_answers, description = rag_description),
         Tool(name = 'EvanMiller', func = fetch_evan_miller, description = 'Statistical A/B testing guidance from Evan Miller.'),
