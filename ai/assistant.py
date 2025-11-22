@@ -49,7 +49,7 @@ def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:
         )
       
     # Conversation setup
-    tools = get_tools()
+    tools_ = get_tools()
     credentials = load_credentials()
     ai_exception = ai_exceptions(lang)
     messages = [{'role': 'system', 'content': prompt}] + session_state.chat_history
@@ -58,8 +58,7 @@ def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:
     for api_key, base_url, model in credentials: 
         try:
             llm = init_chat_model(model, api_key = api_key, base_url = base_url)
-            xplendid_agent = create_agent(model = llm, tools = tools
-            )
+            xplendid_agent = create_agent(model = llm, tools = tools_)
             completion = xplendid_agent.invoke({'messages': messages})
             response = completion['messages'][-1].content
             return response
