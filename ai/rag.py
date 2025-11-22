@@ -2,10 +2,12 @@
 import os
 import json
 import datetime
+import numpy as np
 import joblib as jbl
 from langchain_milvus import Milvus
 from utils.auth import load_credentials
 from huggingface_hub import InferenceClient
+from langchain_core.vectorstores import VectorStoreRetriever
 from pymilvus import connections, Collection, FieldSchema, DataType, CollectionSchema
 
 
@@ -20,7 +22,7 @@ class RAG:
 
 
     # Method to load the dataset
-    def load_data(self):
+    def load_data(self) -> list[dict[str, str]]:
         data = []
         with open('data/qa_dataset.jsonl', 'r', encoding = 'utf-8') as f:
             for line in f:
@@ -29,7 +31,7 @@ class RAG:
 
 
     # Method for getting embeddings
-    def get_embeddings(self):
+    def get_embeddings(self) -> list[np.ndarray[float]]:
         embeddings_path = 'data/qa_embeddings.joblib'
         embeddings_ctime = 2e-10 if not os.path.exists(embeddings_path) \
                             else os.path.getctime(embeddings_path)
@@ -51,17 +53,17 @@ class RAG:
 
 
     # Method to get the embedding for a query
-    def embed_query(self, text: str):
+    def embed_query(self, text: str) -> np.ndarray[float]:
         return self.hf_client.feature_extraction(text = text)
     
 
     # Method to get embeddings for documents
-    def embed_documents(self, texts: list[str]):
-        return [self.hf_client.feature_extraction(text=t) for t in texts]
+    def embed_documents(self, texts: list[str]) -> list[np.ndarray[float]]:
+        return [self.hf_client.feature_extraction(text = t) for t in texts]
         
 
     # A function to load the collection into Milvus
-    def load_collection(self):
+    def load_collection(self) -> None:
         # Getting embeddings and data
         embeddings = self.get_embeddings()
         data = self.load_data()
@@ -93,7 +95,7 @@ class RAG:
 
 
     # A function to get the retriever
-    def get_retriever(self):
+    def get_retriever(self) -> VectorStoreRetriever:
         # Connecting to Milvus
         self.connect_to_milvus
         collection = Collection(self.collection_name)

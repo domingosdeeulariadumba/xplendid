@@ -1,5 +1,5 @@
 # Exception messages for the app
-def stats_exceptions(lang = 'en'):
+def stats_exceptions(lang: str = 'en') -> tuple[str, str, str, str]:
     if lang == 'en':
         global_error_msg = '❌ Input error! Hover the mouse over ❔ icon for help.'
         design_error_msg = '🚨 Invalid input(s)! Check your **BCR** or **MDE** values.'
@@ -14,7 +14,7 @@ def stats_exceptions(lang = 'en'):
 
 
 # Exception responses from AI assistant
-def ai_exceptions(lang):  
+def ai_exceptions(lang: str) -> str:  
     if lang == 'en':          
         exceptions = '⚠️ You are out of credits! Please, try again later.', \
         '🌐 Connection error. Please, check your internet.',\
