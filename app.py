@@ -451,48 +451,10 @@ container_title = '''<div style = 'text-align: center; color: #040404'><b>Let's 
 st.markdown(container_title, unsafe_allow_html = True)
 
 
-# Connection icons
-kofi_icon_url = 'https://i.postimg.cc/wj3w1mjG/kofi-icon.png'
-linktree_icon_url = 'https://i.postimg.cc/t4vNmLB0/linktree-icon.png'
-github_icon_url = 'https://i.postimg.cc/9FVb4PDk/github-icon.png'
-linkedin_icon_url = 'https://i.postimg.cc/W1178266/linkedin-icon.png'
-height_ = 35
-
-container_style = '''
-background-color: #E1EBEE;
-border-radius: 14px;
-padding: 10px;
-margin: 10px;
-height: 60px;
-display: flex;
-justify-content: center;
-align-items: center;
-gap: 15px;
-'''
-
-icons_markdown = f'''
-<div style = '{container_style}'>
-        </a>
-        <a href = 'https://ko-fi.com/domingosdeeulariadumba' target = '_blank' style = 'text-decoration: none;'>
-            <img src = '{kofi_icon_url}' alt = "Domingos' ko-fi" height = '{height_}' width = '{height_}'/>
-        </a>
-        </a>
-        <a href = 'https://linktr.ee/domingosdeeulariadumba' target = '_blank' style = 'text-decoration: none;'>
-            <img src = '{linktree_icon_url}' alt = "Domingos' Linktree" height = '{height_}' width = '{height_}'/>
-        </a>
-        <a href = 'https://github.com/domingosdeeulariadumba' target = '_blank' style = 'text-decoration: none;'>
-            <img src = '{github_icon_url}' alt = "Domingos' GitHub" height = '{height_}' width = '{height_}'/>
-        </a>
-        <a href = 'https://linkedin.com/in/domingosdeeulariadumba/' target = '_blank' style = 'text-decoration: none;'>
-            <img src = '{linkedin_icon_url}' alt = "Domingos' LinkedIn" height = '{height_}' width = '{height_}'/>
-        </a>
-</div>
-'''
-
 # Centralizing the connection icons
 _, middle, _ = st.columns([.5, .5, .5])
 with middle.container(border = False):
-    st.markdown(icons_markdown, unsafe_allow_html = True)
+    st.markdown(social_icons_markdown, unsafe_allow_html = True)
     
 # Footer stuff
 year = datetime.now().year

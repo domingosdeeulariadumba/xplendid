@@ -66,7 +66,7 @@ def overview_text(brand:str, lang: str = 'en'):
 
 
 
-# Ícones da secção de links
+# Social media icons and links
 kofi_icon_url = 'https://i.postimg.cc/wj3w1mjG/kofi-icon.png'
 linktree_icon_url = 'https://i.postimg.cc/t4vNmLB0/linktree-icon.png'
 github_icon_url = 'https://i.postimg.cc/9FVb4PDk/github-icon.png'
@@ -84,7 +84,7 @@ justify-content: center;
 align-items: center;
 gap: 15px;
 '''
-icons_markdown = f'''
+social_icons_markdown = f'''
 <div style = '{container_style}'>
         </a>
         <a href = 'https://ko-fi.com/domingosdeeulariadumba' target = '_blank' style = 'text-decoration: none;'>
