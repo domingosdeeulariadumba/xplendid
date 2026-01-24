@@ -1,3 +1,39 @@
+
+
+# xplendid's background color
+background_style = '''
+    <style>
+        .stApp {
+            background: #E1EBEE;
+        }
+    </style>
+'''
+
+
+# Welcome text in English and Portuguese
+def welcome_text(lang: str = 'en') -> str:
+    text = '''
+            <div style='text-align: justify;'>
+            Bem vindo ao <strong><em>xplendid</em></strong> — a plataforma ideal para design e análise dos seus experimentos A/B. Quer optimizar o seu website, refinar funcionalidades dos seus produtos ou  melhorar o desempenho das suas campanhas de marketing? Esta aplicação coloca à sua disposição as ferramentas necessárias chegar a estes resultados.
+            </div>
+            ''' \
+            if lang == 'pt' else \
+            '''
+            <div style='text-align: justify;'>
+            Welcome to <strong><em>xplendid</em></strong> — your go-to platform for seamless A/B testing and data-driven decision-making. Whether you're optimizing your website, refining product features, or improving marketing campaigns, <strong><em>xplendid</em></strong> empowers you with cutting-edge tools to ensure your experiments deliver actionable insights.
+            </div>
+        '''
+    return text
+
+# Outputs and feedback dividers
+xplendid_div_body = '''
+<hr style = 'border: none; border-top: 1.5px dotted #ff66c4; height: 1px; width: 100%;'>
+'''
+xplendid_div_fb = '''
+<div style = 'width: 58%; height: 2px; background-color:  #ff66c4'></div>
+'''
+
+
 # Style for the file uploader component in Streamlit
 upload_dataset_button_style = '''
 <style>
@@ -30,20 +66,23 @@ upload_dataset_button_style = '''
 '''
 
 
-def overview_text(brand:str, lang: str = 'en'):
+# Overview text in English and Portuguese
+xplendid_font_style = "<span style = 'color: #ff66c4;'><strong><em>xplendid</strong></em></span>"
+def overview_text(lang: str = 'en') -> str:
+    global xplendid_font_style
     text = '''
         <div style='text-align: justify;'>
         <strong>What Makes this Tool Exceptional?</strong>
         
-        - <em><strong>Effortless Experimentation: {brand}</strong> simplifies the complexities of analyzing A/B tests with tools that are accurate, intuitive, and built for speed. Calculate sample sizes, compare results, and uncover insights without missing a beat.</em>
+        - <em><strong>Effortless Experimentation: {style}</strong> simplifies the complexities of analyzing A/B tests with tools that are accurate, intuitive, and built for speed. Calculate sample sizes, compare results, and uncover insights without missing a beat.</em>
         
-        - <em><strong>Insightful Visualizations:</em></strong> dive deep into your data with dynamic charts and graphs that tell the full story. From confidence intervals to clear comparisons, {brand} transforms numbers into visuals that drive action.</em>
+        - <em><strong>Insightful Visualizations:</em></strong> dive deep into your data with dynamic charts and graphs that tell the full story. From confidence intervals to clear comparisons, {style} transforms numbers into visuals that drive action.</em>
         
         - <em><strong>Smart Recommendations:</strong> get more than just results — receive actionable guidance to understand the “what,” “why,” and “what’s next” for your experiments.</em>
         
-        - <em><strong>Streamlined User Experience:</em></strong> with a clean and intuitive interface, {brand} ensures that every feature is just a click away. It’s easy to use, no matter your experience level.</em>
+        - <em><strong>Streamlined User Experience:</em></strong> with a clean and intuitive interface, {style} ensures that every feature is just a click away. It’s easy to use, no matter your experience level.</em>
         
-        - <em><strong>Built for the Innovators:</em></strong> ideal for marketers, product managers, data analysts, and anyone who values data-driven decisions. With {brand} your data becomes a superpower.</em>
+        - <em><strong>Built for the Innovators:</em></strong> ideal for marketers, product managers, data analysts, and anyone who values data-driven decisions. With {style} your data becomes a superpower.</em>
         </div>
         ''' \
         if lang == 'en' else \
@@ -51,19 +90,18 @@ def overview_text(brand:str, lang: str = 'en'):
         <div style='text-align: justify;'>
         <strong>O que faz este serviço excepcional?</strong>
         
-        - <em><strong>Experimentação Simplificada: {brand}</strong> remove as complexidades do processo de análise the experimentos A/B com precisão, intuição e rapidez. Calcule tamanho de amostras, compare resultados e desvende os insights ao detalhe.</em>
+        - <em><strong>Experimentação Simplificada: {style}</strong> remove as complexidades do processo de análise the experimentos A/B com precisão, intuição e rapidez. Calcule tamanho de amostras, compare resultados e desvende os insights ao detalhe.</em>
         
-        - <em><strong>Relatórios Informativos:</em></strong> aprofunde a análise dos seus dados como nunca através de visualizaçoes interativas. Desde gráficos de erros, para efeitos comparativos, o {brand} transforma simples números em visuais sugestivos para tomada de decisão em ambientes dinâmicos.</em>
+        - <em><strong>Relatórios Informativos:</em></strong> aprofunde a análise dos seus dados como nunca através de visualizaçoes interativas. Desde gráficos de erros, para efeitos comparativos, o {style} transforma simples números em visuais sugestivos para tomada de decisão em ambientes dinâmicos.</em>
         
         - <em><strong>Recomendações Inteligentes:</strong> vá além dos números — receba oriantações para compreender os "porquês" e as próximas etapas de implementação dos seus experimentos.</em>
         
-        - <em><strong>Óptima Experiência de Utilizador:</em></strong> com uma simples e prática, no {brand} tudo o que é para o seu experimento está a um click.</em>
+        - <em><strong>Óptima Experiência de Utilizador:</em></strong> com uma simples e prática, no {style} tudo o que é para o seu experimento está a um click.</em>
         
-        - <em><strong>Feita para Inovadores:</em></strong> ideal para profissionais de marketing, product managers, analistas e cientistas de dados, e demais interessados em tomar decisões com uma abordagem data-driven. Com {brand} seus dados se tornam superpoderes.</em>
+        - <em><strong>Feita para Inovadores:</em></strong> ideal para profissionais de marketing, product managers, analistas e cientistas de dados, e demais interessados em tomar decisões com uma abordagem data-driven. Com {style} seus dados se tornam superpoderes.</em>
         </div>
-        '''.format(brand=brand)
-    return text
-
+        '''
+    return text.format(style = xplendid_font_style)
 
 
 # Social media icons and links
@@ -72,7 +110,6 @@ linktree_icon_url = 'https://i.postimg.cc/t4vNmLB0/linktree-icon.png'
 github_icon_url = 'https://i.postimg.cc/9FVb4PDk/github-icon.png'
 linkedin_icon_url = 'https://i.postimg.cc/W1178266/linkedin-icon.png'
 height_ = 35
-
 container_style = '''
 background-color: #E1EBEE;
 border-radius: 14px;

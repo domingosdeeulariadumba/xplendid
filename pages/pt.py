@@ -15,26 +15,15 @@ from styles import *
 
 
 # Título, ícones e estilização
-pictograph = 'https://i.postimg.cc/y6DbW1FL/xplendid-pictograph.png'
 st.set_page_config(
     page_title = 'xplendid',
-    page_icon = pictograph, 
+    page_icon = st.secrets['urls']['page_icon'], 
     layout = 'centered',
     initial_sidebar_state = 'collapsed'
 ) 
 
 # Cor de Fundo
-st.markdown(
-    '''
-    <style>
-        .stApp {
-            background: #E1EBEE;
-        }
-    </style>
-''',
-    unsafe_allow_html = True
-)
-
+st.markdown(background_style, unsafe_allow_html = True)
 
 # A apagar a sessão da página em Inglês
 if 'pt_initialized' not in st.session_state:
@@ -47,28 +36,17 @@ lang_col.page_link('app.py', label = '', icon = '🇬🇧')
 st.write('')
 
 # Logo
-logo = 'https://i.postimg.cc/cCJg1kKz/xplendid-logo-body.png'
-st.markdown(f"<img src = '{logo}'>", unsafe_allow_html = True)
+st.markdown(f"<img src = '{st.secrets['urls']['logo']}'>", unsafe_allow_html = True)
 
 # Divisor antes do corpo
-left_bar = 'https://i.postimg.cc/QMZnYCdf/left-bar-body.png'
-st.markdown(f"<img src = {left_bar}>", unsafe_allow_html = True)
+st.markdown(f"<img src = '{st.secrets['urls']['left_div']}'>", unsafe_allow_html = True)
 
 # Boas vindas e visão geral
-st.markdown('''
-        <div style='text-align: justify;'>
-         Bem vindo ao <strong><em>xplendid</em></strong> — a plataforma ideal para design e análise dos seus experimentos A/B. Quer optimizar o seu website, refinar funcionalidades dos seus produtos ou  melhorar o desempenho das suas campanhas de marketing? Esta aplicação coloca à sua disposição as ferramentas necessárias chegar a estes resultados.
-         </div>
-''', 
-unsafe_allow_html = True
-)
-
-# Fonte em itálico e negrito
-xplendid_bold_italic = "<span style = 'color: #ff66c4;'><strong><em>xplendid</strong></em></span>"
+st.markdown(welcome_text('pt'), unsafe_allow_html = True)
 
 # Mais sobre xplendid
 if st.button('↘'):
-    st.markdown(overview_text(xplendid_bold_italic), unsafe_allow_html = True)
+    st.markdown(overview_text(xplendid_font_style, 'pt'), unsafe_allow_html = True)
     _, _, less = st.columns([3, 3, .3])
     if less.button('↖'):
         st.rerun()
@@ -78,25 +56,13 @@ st.write(' ')
 st.write('Explore, analise e produza resultados hoje! 🚀')
 
 # Barra divisora antes do corpo da página
-right_bar = 'https://i.postimg.cc/QdTyq1hB/right-bar-body.png'
-st.markdown(f"<img src = {right_bar}>", unsafe_allow_html = True)
+st.markdown(f"<img src = {st.secrets['urls']['right_div']}>", unsafe_allow_html = True)
 for _ in range(3):
     st.write('')
 
 # Ícone para design de experimentos
-design_icon = 'https://i.postimg.cc/65qpmcFk/design-icon.png'
-st.markdown(f"<img src = {design_icon}>", unsafe_allow_html = True)
+st.markdown(f"<img src = '{st.secrets['urls']['design_icon']}'>", unsafe_allow_html = True)
 st.write('')
-
-# Divisor de outputs
-xplendid_div_body = '''
-<hr style = 'border: none; border-top: 1.5px dotted #ff66c4; height: 1px; width: 100%;'>
-'''
-
-# Divisor da secção de feedback
-xplendid_div_fb = '''
-<div style = 'width: 52%; height: 2px; background-color:  #ff66c4'></div>
-'''
             
 # Tratamento de excepções relativos ao design e à análise do experimento
 global_error_msg, design_error_msg, zero_conversions_warning, plot_error_msg = stats_exceptions('pt')
