@@ -1,8 +1,7 @@
 ## Dependências
-import time
-import joblib as jbl
-import streamlit as st
+import time, pandas as pd, joblib as jbl, streamlit as st
 from ablisk.core import ABLisk
+from ablisk.utils import load_from_dataset
 from datetime import datetime
 from ai.assistant import ask_xplendid
 from utils.exceptions import stats_exceptions
@@ -10,6 +9,9 @@ from utils.core import (
     stream_design_recommendation, create_plot, 
     stream_experiment_recommendations, print_experiment_summary, pt_recommendation
 )
+import sys
+sys.path.append('..')
+from style import upload_dataset_button_style
 
 
 # Título, ícones e estilização
@@ -187,11 +189,25 @@ st.write('')
 
 # Expansor para análise de resultados do experimento
 with st.expander('Analise os seus resultados ↴'):
-    for _ in range(4):
-        st.write('\n')
-        
+    # Design container      
+    _, dataset_upload, _ = st.columns([1.5, .1, 1.5])
+    with dataset_upload.container():
+        st.markdown(upload_dataset_button_style, unsafe_allow_html = True)
+        uploaded_file = st.file_uploader(
+            label = '',
+            type = 'csv', 
+            key = 'upload_dataset',
+            help = 'Carregeue a base de dados do seu experimento. Deve ser um ficheiro .csv.'
+            )
+    if uploaded_file is not None:
+        experiment_dataset = pd.read_csv(uploaded_file)
+        defaults = load_from_dataset(experiment_dataset)
+
+
     # Container dedicado ao design do experimento     
     ## Lado esquerdo
+    for _ in range(2):
+        st.write('\n')
     ex_analytics_upperleft, _, ex_analytics_upperright = st.columns([1.5, .5, 1.5])
     with ex_analytics_upperleft.container():
         bcr_analytics = st.number_input(
@@ -245,12 +261,13 @@ with st.expander('Analise os seus resultados ↴'):
             )
         nctrl = st.number_input(
             '_Tamanho da Amostra_',
-            0,
+            0 if uploaded_file is None else defaults[0],
             key = 'nctrl',
             help = 'Deve ser um inteiro positivo.'
             )
         pctrl = st.number_input(
             '_Convertidos_', 
+            .0 if uploaded_file is None else defaults[1],
             key = 'pctrl',
             help = 'Varia de 0 a 1.'
             )
@@ -263,12 +280,13 @@ with st.expander('Analise os seus resultados ↴'):
                )
            ntrmt = st.number_input(
                'Tamanho da Amastra',
-                0,
+                0 if uploaded_file is None else defaults[2],
                 key = 'ntrmt',
                 label_visibility = 'hidden'
                )
            ptrmt = st.number_input(
                'Convertidos', 
+               .0 if uploaded_file is None else defaults[-1],
                key = 'ptrmt',
                label_visibility = 'hidden'
                )

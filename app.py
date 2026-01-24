@@ -1,8 +1,7 @@
 ## Dependencies
-import time
-import joblib as jbl
-import streamlit as st
+import time, pandas as pd, joblib as jbl, streamlit as st
 from ablisk.core import ABLisk
+from ablisk.utils import load_from_dataset
 from datetime import datetime
 from ai.assistant import ask_xplendid
 from utils.exceptions import stats_exceptions
@@ -10,6 +9,7 @@ from utils.core import (
     stream_design_recommendation, create_plot, 
     stream_experiment_recommendations, print_experiment_summary
 )
+from style import upload_dataset_button_style
 
 
 # Title, icon, and layout
@@ -186,13 +186,25 @@ st.write('')
 
 
 # Experiment results expander
-with st.expander('Analyse your results ↴'):
-    for _ in range(4):
-        st.write('\n')
-        
+with st.expander('Analyse your results ↴'):       
     # Design container      
+    _, dataset_upload, _ = st.columns([1.5, .1, 1.5])
+    with dataset_upload.container():
+        st.markdown(upload_dataset_button_style, unsafe_allow_html = True)
+        uploaded_file = st.file_uploader(
+            label = '',
+            type = 'csv', 
+            key = 'upload_dataset',
+            help = 'Upload your experiment dataset. It must be a .csv file.'
+            )
+    if uploaded_file is not None:
+        experiment_dataset = pd.read_csv(uploaded_file)
+        defaults = load_from_dataset(experiment_dataset)
+   
     ## Left Container
-    ex_analytics_upperleft, _, ex_analytics_upperright = st.columns([1.5, .5, 1.5])
+    for _ in range(2):
+        st.write('\n')
+    ex_analytics_upperleft, dataset_upload, ex_analytics_upperright = st.columns([1.5, .5, 1.5])
     with ex_analytics_upperleft.container():
         bcr_analytics = st.number_input(
             'Baseline Conversion Rate (%)', 
@@ -245,12 +257,13 @@ with st.expander('Analyse your results ↴'):
             )
         nctrl = st.number_input(
             '_Sample Size_', 
-            0,
+            0 if uploaded_file is None else defaults[0],
             key = 'nctrl', 
             help = 'Must be positive integer.'
             )
         pctrl = st.number_input(
             '_Conversions_', 
+            .0 if uploaded_file is None else defaults[1],
             key = 'pctrl', 
             help = 'Spans from 0 to 1.'
             )
@@ -263,12 +276,13 @@ with st.expander('Analyse your results ↴'):
                )
            ntrmt = st.number_input(
                'Sample Size', 
-               0,
+               0 if uploaded_file is None else defaults[2],
                key = 'ntrmt', 
                label_visibility = 'hidden'
                )
            ptrmt = st.number_input(
                'Conversions', 
+               .0 if uploaded_file is None else defaults[-1],
                key = 'ptrmt', 
                label_visibility = 'hidden'
                )

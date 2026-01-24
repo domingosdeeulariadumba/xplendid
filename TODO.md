@@ -9,8 +9,8 @@
 - [X] Create a QA Dataset to Support the Vector Embeddings Database
 - [X] Containerize the app
 - [X] Design the application architecture
+- [X] Load dataset option
 ## In Progress / Pending
 - [ ] Refine the AI Assistant Prompt
 - [ ] Perform unit tests
-- [ ] Load dataset option (?)
 - [ ] Add Bayesian features
