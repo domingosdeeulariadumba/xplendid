@@ -1,4 +1,4 @@
-ablisk >= 0.2.3
+ablisk >= 0.2.4
 openai >= 1.97.0
 streamlit == 1.37.1
 numpy >= 1.26.4
