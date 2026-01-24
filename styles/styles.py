@@ -1,4 +1,6 @@
-
+# imports
+import streamlit as st
+from typing import Callable
 
 # xplendid's background color
 background_style = '''
@@ -139,3 +141,6 @@ social_icons_markdown = f'''
         </a>
 </div>
 '''
+
+askai_style: Callable[['str'], str] = lambda lang: f"<img src='{st.secrets['urls']['askai_en_gif']}' style='max-width:80px; width:auto; height:auto;'>" if lang == 'en' \
+                                    else f"<img src='{st.secrets['urls']['askai_pt_gif']}' style='max-width:80px; width:auto; height:auto;'>"

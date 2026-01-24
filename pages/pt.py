@@ -131,8 +131,7 @@ with st.expander('Planeie o seu experimento ↴'):
 # Ícone para resultados do experimento
 for _ in range(2):
     st.write('')
-analysis_icon = 'https://i.postimg.cc/4yLN3HH2/analysis-icon.png'
-st.markdown(f"<img src = {analysis_icon}>", unsafe_allow_html = True)
+st.markdown(f"<img src = '{st.secrets['urls']['analysis_icon']}'>", unsafe_allow_html = True)
 st.write('')
 
 
@@ -205,7 +204,7 @@ with st.expander('Analise os seus resultados ↴'):
     ex_analytics_lowerleft, _, ex_analytics_lowermiddle, _, ex_analytics_lowerright = st.columns([1.5, .5, 1.5, .5, 2])
     with ex_analytics_lowerleft.container():
         st.markdown(
-            xplendid_bold_italic.replace('xplendid', 'Controlo'), 
+            xplendid_font_style.replace('xplendid', 'Controlo'), 
             unsafe_allow_html = True
             )
         nctrl = st.number_input(
@@ -224,7 +223,7 @@ with st.expander('Analise os seus resultados ↴'):
     ## Centro do container
     with ex_analytics_lowermiddle.container():
            st.markdown(
-               xplendid_bold_italic.replace('xplendid', 'Efeito'), 
+               xplendid_font_style.replace('xplendid', 'Efeito'), 
                unsafe_allow_html = True
                )
            ntrmt = st.number_input(
@@ -244,10 +243,7 @@ with st.expander('Analise os seus resultados ↴'):
     with ex_analytics_lowerright.container():
         for _ in range(2):
             st.write('')
-        plot_analytics_pt = st.radio(
-            'Gráfico', 
-            ['KDE', 'Barras de Erro']
-            ) 
+        plot_analytics_pt = st.radio('Gráfico', ['KDE', 'Barras de Erro']) 
         plot_analytics = 'Error Bars' if plot_analytics_pt == 'Barras de Erro' else plot_analytics_pt         
      
     # Inicialização da sessão para visualização de resultados
@@ -370,7 +366,7 @@ chat_col, open_chat_col, _, feedback_col = st.columns([.6, .2, 2.1, 1.7])
 with feedback_col.container():
     for _ in range(4):
         st.write('')
-    st.markdown(f'Avalie o **{xplendid_bold_italic}** agora!', unsafe_allow_html = True) 
+    st.markdown(f'Avalie o **{xplendid_font_style}** agora!', unsafe_allow_html = True) 
     feedback_series = jbl.load('feedbacks.joblib')
     sentiment_mapping = ['uma', 'duas', 'três', 'quatro', 'cinco']
     selected = st.feedback('stars')
@@ -416,11 +412,7 @@ def show_dialog(session_state):
         with messages.chat_message(msg['role']):
             st.markdown(msg['content'])                     
 
-askai_gif = 'https://i.postimg.cc/CxCzV5LD/pergunte-a-ia.gif'
-chat_col.markdown(
-    f"<img src='{askai_gif}' style='max-width:80px; width:auto; height:auto;'>",
-    unsafe_allow_html = True
-    )
+chat_col.markdown(askai_style('en'), unsafe_allow_html = True)
 if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 
