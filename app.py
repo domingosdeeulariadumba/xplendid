@@ -9,7 +9,7 @@ from utils.core import (
     stream_design_recommendation, create_plot, 
     stream_experiment_recommendations, print_experiment_summary
 )
-from style import upload_dataset_button_style
+from styles import *
 
 
 # Title, icon, and layout
@@ -65,24 +65,7 @@ xplendid_bold_italic = "<span style = 'color: #ff66c4;'><strong><em>xplendid</st
 
 # More info about xplendid
 if st.button('↘'):
-    st.markdown(
-        f'''
-        <div style='text-align: justify;'>
-        <strong>What Makes this Tool Exceptional?</strong>
-        
-        - <em><strong>Effortless Experimentation: {xplendid_bold_italic}</strong> simplifies the complexities of analyzing A/B tests with tools that are accurate, intuitive, and built for speed. Calculate sample sizes, compare results, and uncover insights without missing a beat.</em>
- 
-        - <em><strong>Insightful Visualizations:</em></strong> dive deep into your data with dynamic charts and graphs that tell the full story. From confidence intervals to clear comparisons, {xplendid_bold_italic} transforms numbers into visuals that drive action.</em>
-        
-        - <em><strong>Smart Recommendations:</strong> get more than just results — receive actionable guidance to understand the “what,” “why,” and “what’s next” for your experiments.</em>
-        
-        - <em><strong>Streamlined User Experience:</em></strong> with a clean and intuitive interface, {xplendid_bold_italic} ensures that every feature is just a click away. It’s easy to use, no matter your experience level.</em>
-        
-        - <em><strong>Built for the Innovators:</em></strong> ideal for marketers, product managers, data analysts, and anyone who values data-driven decisions. With {xplendid_bold_italic} your data becomes a superpower.</em>
-        </div>
-        ''',
-        unsafe_allow_html = True
-        )
+    st.markdown(overview_text(xplendid_bold_italic), unsafe_allow_html = True)
     _, _, less = st.columns([3, 3, .3])
     if less.button('↖'):
         st.rerun()

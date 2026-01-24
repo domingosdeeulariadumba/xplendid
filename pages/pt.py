@@ -11,7 +11,7 @@ from utils.core import (
 )
 import sys
 sys.path.append('..')
-from style import upload_dataset_button_style
+from styles import *
 
 
 # Título, ícones e estilização
@@ -68,24 +68,7 @@ xplendid_bold_italic = "<span style = 'color: #ff66c4;'><strong><em>xplendid</st
 
 # Mais sobre xplendid
 if st.button('↘'):
-    st.markdown(
-        f'''
-        <div style='text-align: justify;'>
-        <strong>O que faz este serviço excepcional?</strong>
-        
-        - <em><strong>Experimentação Simplificada: {xplendid_bold_italic}</strong> remove as complexidades do processo de análise the experimentos A/B com precisão, intuição e rapidez. Calcule tamanho de amostras, compare resultados e desvende os insights ao detalhe.</em>
- 
-        - <em><strong>Relatórios Informativos:</em></strong> aprofunde a análise dos seus dados como nunca através de visualizaçoes interativas. Desde gráficos de erros, para efeitos comparativos, o {xplendid_bold_italic} transforma simples números em visuais sugestivos para tomada de decisão em ambientes dinâmicos.</em>
-        
-        - <em><strong>Recomendações Inteligentes:</strong> vá além dos números — receba oriantações para compreender os "porquês" e as próximas etapas de implementação dos seus experimentos.</em>
-        
-        - <em><strong>Óptima Experiência de Utilizador:</em></strong> com uma simples e prática, no {xplendid_bold_italic} tudo o que é para o seu experimento está a um click.</em>
-        
-        - <em><strong>Feita para Inovadores:</em></strong> ideal para profissionais de marketing, product managers, analistas e cientistas de dados, e demais interessados em tomar decisões com uma abordagem data-driven. Com {xplendid_bold_italic} seus dados se tornam superpoderes.</em>
-        </div>
-        ''',
-        unsafe_allow_html = True
-        )
+    st.markdown(overview_text(xplendid_bold_italic), unsafe_allow_html = True)
     _, _, less = st.columns([3, 3, .3])
     if less.button('↖'):
         st.rerun()
