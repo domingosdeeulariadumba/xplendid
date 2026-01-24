@@ -147,12 +147,12 @@ social_icons_markdown = f'''
 
 
 # AskAI gif style based on language
-askai_style: Callable[['str'], str] = lambda lang = 'en': f"<img src='{st.secrets['urls']['askai_en_gif']}' style='max-width:80px; width:auto; height:auto;'>" if lang == 'en' \
+askai_style: Callable[[str], str] = lambda lang = 'en': f"<img src='{st.secrets['urls']['askai_en_gif']}' style='max-width:80px; width:auto; height:auto;'>" if lang == 'en' \
                                     else f"<img src='{st.secrets['urls']['askai_pt_gif']}' style='max-width:80px; width:auto; height:auto;'>"
 
 
 # Let's connect style based on language
-lets_connect_style = Callable[[str], str] = lambda lang = 'en': "<div style = 'text-align: center; color: #040404'><b>Let's connect! 🗪</b></div>" if lang == 'en' \
+lets_connect_style: Callable[[str], str] = lambda lang = 'en': "<div style = 'text-align: center; color: #040404'><b>Let's connect! 🗪</b></div>" if lang == 'en' \
                                     else "<div style = 'text-align: center; color: #040404'><b>Conecta-te comigo! 🗪</b></div>"
 
 
