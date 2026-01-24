@@ -2,7 +2,6 @@
 import time, pandas as pd, joblib as jbl, streamlit as st
 from ablisk.core import ABLisk
 from ablisk.utils import load_from_dataset
-from datetime import datetime
 from ai.assistant import ask_xplendid
 from utils.exceptions import stats_exceptions
 from utils.core import (
@@ -395,7 +394,7 @@ def show_dialog(session_state):
         with messages.chat_message(msg['role']):
             st.markdown(msg['content'])                     
 
-chat_col.markdown( askai_style('en'), unsafe_allow_html = True)
+chat_col.markdown( askai_style(), unsafe_allow_html = True)
 if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 
@@ -403,21 +402,10 @@ if open_chat_col.button('⭹'):
 # Links section    
 for i in range(8):
     st.write('')
-
-
-# Customized invite for connection
-container_title = '''<div style = 'text-align: center; color: #040404'><b>Let's connect! 🗪</b></div>'''
-st.markdown(container_title, unsafe_allow_html = True)
-
-
-# Centralizing the connection icons
+st.markdown(lets_connect_style(), unsafe_allow_html = True)
 _, middle, _ = st.columns([.5, .5, .5])
 with middle.container(border = False):
     st.markdown(social_icons_markdown, unsafe_allow_html = True)
     
 # Footer stuff
-year = datetime.now().year
-footer_markdown = f'''
-<div style = 'text-align: center; color: #040404'>© {year} <b>Domingos de Eulária Dumba</b>.</div>
-'''
-st.markdown(footer_markdown, unsafe_allow_html = True)
+st.markdown(footer_style, unsafe_allow_html = True)

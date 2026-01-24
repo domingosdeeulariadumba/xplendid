@@ -1,6 +1,9 @@
-# imports
+# Dependencies
 import streamlit as st
 from typing import Callable
+from datetime import datetime
+
+
 
 # xplendid's background color
 background_style = '''
@@ -142,5 +145,16 @@ social_icons_markdown = f'''
 </div>
 '''
 
-askai_style: Callable[['str'], str] = lambda lang: f"<img src='{st.secrets['urls']['askai_en_gif']}' style='max-width:80px; width:auto; height:auto;'>" if lang == 'en' \
+
+# AskAI gif style based on language
+askai_style: Callable[['str'], str] = lambda lang = 'en': f"<img src='{st.secrets['urls']['askai_en_gif']}' style='max-width:80px; width:auto; height:auto;'>" if lang == 'en' \
                                     else f"<img src='{st.secrets['urls']['askai_pt_gif']}' style='max-width:80px; width:auto; height:auto;'>"
+
+
+# Let's connect style based on language
+lets_connect_style = Callable[[str], str] = lambda lang = 'en': "<div style = 'text-align: center; color: #040404'><b>Let's connect! 🗪</b></div>" if lang == 'en' \
+                                    else "<div style = 'text-align: center; color: #040404'><b>Conecta-te comigo! 🗪</b></div>"
+
+
+# Footer style with current year
+footer_style = f"<div style = 'text-align: center; color: #040404'>© {datetime.now().year} <b>Domingos de Eulária Dumba</b>.</div>"
