@@ -107,7 +107,7 @@ with st.expander('Planeie o seu experimento ↴'):
             min_sample_size = ab_test_design.get_sample_size()
             
             # A apresentar a informação relativa ao tamanho amostral
-            if type(min_sample_size) is int: 
+            if isinstance(min_sample_size, int): 
                 msg_design = st.secrets['summary']['design']['pt'].format(min_sample_size)
                 st.write('')
                 st.write_stream(
