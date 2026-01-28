@@ -147,7 +147,7 @@ with st.expander('Analise os seus resultados ↴'):
             help = 'Carregeue a base de dados do seu experimento. Deve ser um ficheiro .csv.'
             )
     if uploaded_file is not None:
-        experiment_dataset = pd.read_csv(uploaded_file)
+        experiment_dataset = pd.read_csv(uploaded_file).dropna()
         defaults = load_from_dataset(experiment_dataset)
 
 
@@ -226,7 +226,7 @@ with st.expander('Analise os seus resultados ↴'):
                unsafe_allow_html = True
                )
            ntrmt = st.number_input(
-               'Tamanho da Amastra',
+               'Tamanho da Amostra',
                 0 if uploaded_file is None else defaults[2],
                 key = 'ntrmt',
                 label_visibility = 'hidden'

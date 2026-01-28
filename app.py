@@ -146,7 +146,7 @@ with st.expander('Analyse your results ↴'):
             help = 'Upload your experiment dataset. It must be a .csv file.'
             )
     if uploaded_file is not None:
-        experiment_dataset = pd.read_csv(uploaded_file)
+        experiment_dataset = pd.read_csv(uploaded_file).dropna() # Must address directly on ablisk
         defaults = load_from_dataset(experiment_dataset)
    
     ## Left Container
@@ -394,7 +394,7 @@ def show_dialog(session_state):
         with messages.chat_message(msg['role']):
             st.markdown(msg['content'])                     
 
-chat_col.markdown( askai_style(), unsafe_allow_html = True)
+chat_col.markdown(askai_style(), unsafe_allow_html = True)
 if open_chat_col.button('⭹'):
     show_dialog(st.session_state)
 
