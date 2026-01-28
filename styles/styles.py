@@ -73,8 +73,7 @@ upload_dataset_button_style = '''
 
 # Overview text in English and Portuguese
 xplendid_font_style = "<span style = 'color: #ff66c4;'><strong><em>xplendid</strong></em></span>"
-def overview_text(lang: str = 'en') -> str:
-    global xplendid_font_style
+def overview_text(font_style: str = xplendid_font_style, lang: str = 'en') -> str:
     text = '''
         <div style='text-align: justify;'>
         <strong>What Makes this Tool Exceptional?</strong>
@@ -106,7 +105,7 @@ def overview_text(lang: str = 'en') -> str:
         - <em><strong>Feita para Inovadores:</em></strong> ideal para profissionais de marketing, product managers, analistas e cientistas de dados, e demais interessados em tomar decisões com uma abordagem data-driven. Com {style} seus dados se tornam superpoderes.</em>
         </div>
         '''
-    return text.format(style = xplendid_font_style)
+    return text.format(style = font_style)
 
 
 # Social media icons and links
