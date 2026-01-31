@@ -1,9 +1,6 @@
 # Dependencies
-import os
-import json
-import datetime
-import numpy as np
-import joblib as jbl
+import os, json, datetime, numpy as np, joblib as jbl
+os.environ['MILVUS_DISABLE_ASYNC'] = '1'
 from langchain_milvus import Milvus
 from utils.auth import load_credentials
 from huggingface_hub import InferenceClient
