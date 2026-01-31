@@ -1,11 +1,15 @@
 # Dependencies
-import os, json, datetime, numpy as np, joblib as jbl
-os.environ['MILVUS_DISABLE_ASYNC'] = '1'
 from langchain_milvus import Milvus
 from utils.auth import load_credentials
 from huggingface_hub import InferenceClient
 from langchain_core.vectorstores import VectorStoreRetriever
+import os, json, datetime, numpy as np, joblib as jbl, warnings
 from pymilvus import connections, Collection, FieldSchema, DataType, CollectionSchema
+
+
+
+# Suppressing AsyncMilvusClient initialization warnings from streamlit deployment
+warnings.filterwarnings('ignore', message='.*AsyncMilvusClient.*')
 
 
 # A class for managing embeddings and retrieval
