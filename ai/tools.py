@@ -34,7 +34,7 @@ def get_tools() -> list[Tool]:
     '''Returns the list of available tools'''
     rag_description = st.secrets['rag_description']
     tools = [
-        Tool(name = 'RAG_KnowledgeBase', func = fetch_answers, description = rag_description),
+        Tool(name = 'RAGKnowledgeBase', func = fetch_answers, description = rag_description),
         Tool(name = 'EvanMiller', func = fetch_evan_miller, description = 'Statistical A/B testing guidance from Evan Miller.'),
         Tool(name = 'Optimizely', func = fetch_optimizely, description = 'Enterprise-level A/B testing tutorials from Optimizely.'),
         Tool(name = 'CXL', func = fetch_cxl, description = 'Experimentation methodology, sample size calculations, and growth insights.'),

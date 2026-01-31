@@ -2,14 +2,10 @@
 from langchain_milvus import Milvus
 from utils.auth import load_credentials
 from huggingface_hub import InferenceClient
+import os, json, datetime, numpy as np, joblib as jbl
 from langchain_core.vectorstores import VectorStoreRetriever
-import os, json, datetime, numpy as np, joblib as jbl, warnings
 from pymilvus import connections, Collection, FieldSchema, DataType, CollectionSchema
 
-
-
-# Suppressing AsyncMilvusClient initialization warnings from streamlit deployment
-warnings.filterwarnings('ignore', message='.*AsyncMilvusClient.*')
 
 
 # A class for managing embeddings and retrieval
@@ -63,7 +59,7 @@ class RAG:
         return [self.hf_client.feature_extraction(text = t) for t in texts]
         
 
-    # A function to load the collection into Milvus
+    # A fmethod to load the collection into Milvus
     def load_collection(self) -> None:
         # Getting embeddings and data
         embeddings = self.get_embeddings()
