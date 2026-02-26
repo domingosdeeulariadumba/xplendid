@@ -18,6 +18,7 @@ st.set_page_config(
     layout = 'centered',
     initial_sidebar_state = 'collapsed'
 ) 
+st.markdown(page_title, unsafe_allow_html = True)
 
 # Background color
 st.markdown(background_style, unsafe_allow_html = True)
