@@ -5,8 +5,7 @@ from datetime import datetime
 
 
 
-# xplendid's page title and background color
-page_title = "<script>document.title = 'xplendid';</script>"
+# xplendid's background color
 background_style = '''
     <style>
         .stApp {
