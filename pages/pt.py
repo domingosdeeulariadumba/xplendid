@@ -8,9 +8,6 @@ from utils.core import (
     stream_design_recommendation, create_plot, 
     stream_experiment_recommendations, print_experiment_summary, pt_recommendation
 )
-import sys
-sys.path.append('..')
-from styles import *
 
 
 # Título, ícones e estilização
@@ -21,6 +18,10 @@ st.set_page_config(
     layout = 'centered',
     initial_sidebar_state = 'collapsed'
 ) 
+import sys
+sys.path.append('..')
+from styles import *
+
 
 # Cor de Fundo
 st.markdown(background_style, unsafe_allow_html = True)
