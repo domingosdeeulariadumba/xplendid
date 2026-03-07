@@ -8,17 +8,16 @@ from utils.core import (
     stream_design_recommendation, create_plot, 
     stream_experiment_recommendations, print_experiment_summary
 )
+from styles import *
 
 
 # Title, icon, and layout
-icon_url = st.secrets['urls']['page_icon']
 st.set_page_config(
     page_title = 'xplendid', 
-    page_icon = icon_url, 
+    page_icon = st.secrets['urls']['page_icon'], 
     layout = 'centered',
     initial_sidebar_state = 'collapsed'
 )
-from styles import *
 
 # Background color
 st.markdown(background_style, unsafe_allow_html = True)
