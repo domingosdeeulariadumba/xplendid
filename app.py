@@ -12,13 +12,13 @@ from styles import *
 
 
 # Title, icon, and layout
+icon_url = st.secrets['urls']['page_icon']
 st.set_page_config(
     page_title = 'xplendid', 
-    page_icon = st.secrets['urls']['page_icon'], 
+    page_icon = icon_url, 
     layout = 'centered',
     initial_sidebar_state = 'collapsed'
-) 
-st.markdown(page_title, unsafe_allow_html = True)
+)
 
 # Background color
 st.markdown(background_style, unsafe_allow_html = True)
