@@ -13,15 +13,8 @@ sys.path.append('..')
 from styles import *
 
 
-# Título, ícones e estilização
-st.set_page_config(
-    page_title = 'xplendid',
-    page_icon = st.secrets['urls']['page_icon'], 
-    layout = 'centered',
-    initial_sidebar_state = 'collapsed'
-)
-
-# Cor de Fundo
+# Cor de Fundo e estilo da página
+set_page(st)
 st.markdown(background_style, unsafe_allow_html = True)
 
 # A apagar a sessão da página em Inglês

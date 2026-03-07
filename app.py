@@ -11,15 +11,8 @@ from utils.core import (
 from styles import *
 
 
-# Title, icon, and layout
-st.set_page_config(
-    page_title = 'xplendid', 
-    page_icon = st.secrets['urls']['page_icon'], 
-    layout = 'centered',
-    initial_sidebar_state = 'collapsed'
-)
-
-# Background color
+# Background color and page styling
+set_page(st)
 st.markdown(background_style, unsafe_allow_html = True)
 
 # Clearing the portuguese page session

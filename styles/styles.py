@@ -5,7 +5,16 @@ from datetime import datetime
 
 
 
-# xplendid's background color
+# xplendid's Title, icon, layout, and background color
+def set_page(st):
+    icon_url = st.secrets['urls']['page_icon']
+    st.set_page_config(
+        page_title='xplendid',
+        page_icon=icon_url,
+        layout='centered',
+        initial_sidebar_state='collapsed'
+    )
+    
 background_style = '''
     <style>
         .stApp {
