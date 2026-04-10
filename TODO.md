@@ -2,7 +2,7 @@
 
 ## Completed / Discarded
 - [X] Make the plot background transparent (discarded)
-- [X] Add A/B/C test option (discarded)
+- [X] Add A/B/n test option (discarded)
 ## Completed
 - [X] Include a chatbot for providing assistance on results and experiments.
 - [X] Create a Vector Embeddings Database for Handling Effectively User Queries
