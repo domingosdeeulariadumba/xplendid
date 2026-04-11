@@ -54,7 +54,7 @@ def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:
     ai_exception = ai_exceptions(lang)
     messages = [{'role': 'system', 'content': prompt}] + session_state.chat_history
       
-    # Attempt to get response throught the xplendid agent
+    # Attempt to get response through the xplendid agent
     for api_key, base_url, model in credentials: 
         try:
             chat_model = init_chat_model(model = model, api_key = api_key, base_url = base_url)
@@ -63,10 +63,9 @@ def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:
             response = completions['messages'][-1].content
             return response
         except RateLimitError:
-                return ai_exception[0]
+                continue
         except APIConnectionError:
                continue
-        except Exception as e:
-             st.error(f"An unexpected error occurred: {e}")
-             #return ai_exception[-1]        
+        except:
+             return ai_exception[-1]        
     return ai_exception[1]
