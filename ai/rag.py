@@ -1,6 +1,4 @@
 # Dependencies
-from unittest import result
-
 from langchain_milvus import Milvus
 from utils.auth import load_credentials
 from huggingface_hub import InferenceClient
@@ -16,7 +14,7 @@ class RAG:
         self.hf_token, self.model = load_credentials('embeddings')
         self.hf_client = InferenceClient(token = self.hf_token, model = self.model)
         self.milvus_uri, self.milvus_token = load_credentials('milvus')
-        #connections.connect(alias = 'default', uri = self.milvus_uri, token = self.milvus_token)
+        self.connect_to_milvus = connections.connect(alias = 'default', uri = self.milvus_uri, token = self.milvus_token)
         self.collection_name = 'xplendid_collection'
 
 
@@ -68,7 +66,7 @@ class RAG:
         data = self.load_data()
 
         # Connecting to Milvus
-        #self.connect_to_milvus
+        self.connect_to_milvus
 
         # Setting up the collection schema
         fields = [
@@ -95,14 +93,10 @@ class RAG:
 
     # A function to get the retriever
     def get_retriever(self) -> VectorStoreRetriever:
-        connections.connect(
-                    alias = 'default',
-                    uri = self.milvus_uri,
-                    token = self.milvus_token
-                    )
-        
-        print(f"Milvus connection result: {result}")
-        print(f"Active connections: {connections.list_connections()}")
+        # Connecting to Milvus
+        self.connect_to_milvus
+        collection = Collection(self.collection_name)
+        collection.load()
     
         # Initializing the Milvus vector store and retriever
         vectorstore = Milvus(

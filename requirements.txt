@@ -8,9 +8,9 @@ plotly == 5.24.1
 kaleido == 0.2.1
 joblib >= 1.4.2
 huggingface-hub >= 0.33.4
-pymilvus >= 2.6.3
+pymilvus == 2.6.6
 langchain >= 1.0.7
 langchain-core >= 1.0.5
-langchain-milvus >= 0.3.0
+langchain-milvus == 0.3.0
 langchain-mistralai >= 1.1.1
 langchain-openai >= 1.0.3
