@@ -102,7 +102,7 @@ class RAG:
         vectorstore = Milvus(
         collection_name = self.collection_name,
         embedding_function = self,
-        connection_args = {'uri': self.milvus_uri, 'token': self.milvus_token, alias = 'xplendid'},
+        connection_args = {'uri': self.milvus_uri, 'token': self.milvus_token, 'alias': 'xplendid'},
         vector_field = 'embedding',
         text_field = 'answer'
         )
