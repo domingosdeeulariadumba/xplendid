@@ -66,6 +66,7 @@ def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:
                 continue
         except APIConnectionError:
                continue
-        except:
+        except Exception as e:
+             st.error(f"Error: {e}")
              return ai_exception[-1]        
     return ai_exception[1]
