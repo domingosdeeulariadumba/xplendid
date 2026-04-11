@@ -1,14 +1,12 @@
 # Dependencies
 import streamlit as st
-from ai.rag import RAG
+from ai.rag import retriever
 from langchain_core.tools import Tool
 
 
 # RAG retriever
 def fetch_answers(query: str) -> str:
     '''Fetch answers from xplendid's knowledge base'''
-    rag_ = RAG()
-    retriever = rag_.get_retriever()
     docs = retriever.invoke(query)
     return '\n\n'.join([doc.page_content for doc in docs])
 

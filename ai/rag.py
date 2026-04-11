@@ -108,3 +108,9 @@ class RAG:
         )
         vector_store_retriever = vectorstore.as_retriever(search_type = 'similarity', search_kwargs = {'k': 3})
         return vector_store_retriever
+
+# Initializing the retriever
+def init_retriever() -> VectorStoreRetriever:
+    rag = RAG()
+    return rag.get_retriever()
+retriever = init_retriever()
