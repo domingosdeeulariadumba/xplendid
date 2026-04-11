@@ -14,7 +14,7 @@ class RAG:
         self.hf_token, self.model = load_credentials('embeddings')
         self.hf_client = InferenceClient(token = self.hf_token, model = self.model)
         self.milvus_uri, self.milvus_token = load_credentials('milvus')
-        #connections.connect(alias = 'default', uri = self.milvus_uri, token = self.milvus_token)
+        self.connect_to_milvus = connections.connect(alias = 'default', uri = self.milvus_uri, token = self.milvus_token)
         self.collection_name = 'xplendid_collection'
 
 
@@ -65,6 +65,9 @@ class RAG:
         embeddings = self.get_embeddings()
         data = self.load_data()
 
+        # Connecting to Milvus
+        self.connect_to_milvus
+
         # Setting up the collection schema
         fields = [
         FieldSchema(name = 'id', dtype = DataType.INT64, is_primary = True, auto_id = True),
@@ -88,8 +91,14 @@ class RAG:
         collection.load()
 
 
-    # A method to get the retriever
+    # A function to get the retriever
     def get_retriever(self) -> VectorStoreRetriever:
+        # Connecting to Milvus
+        self.connect_to_milvus
+        collection = Collection(self.collection_name)
+        collection.load()
+    
+        # Initializing the Milvus vector store and retriever
         vectorstore = Milvus(
         collection_name = self.collection_name,
         embedding_function = self,
@@ -99,9 +108,3 @@ class RAG:
         )
         vector_store_retriever = vectorstore.as_retriever(search_type = 'similarity', search_kwargs = {'k': 3})
         return vector_store_retriever
-    
-# Initializing retriever at the module level to avoid reloading the collection on every query
-def _init_retriever() -> VectorStoreRetriever:
-    rag_ = RAG()
-    return rag_.get_retriever()
-retriever = _init_retriever()
