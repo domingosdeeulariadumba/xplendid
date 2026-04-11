@@ -1,4 +1,6 @@
 # Dependencies
+from unittest import result
+
 from langchain_milvus import Milvus
 from utils.auth import load_credentials
 from huggingface_hub import InferenceClient
@@ -98,6 +100,9 @@ class RAG:
                     uri = self.milvus_uri,
                     token = self.milvus_token
                     )
+        
+        print(f"Milvus connection result: {result}")
+        print(f"Active connections: {connections.list_connections()}")
     
         # Initializing the Milvus vector store and retriever
         vectorstore = Milvus(
