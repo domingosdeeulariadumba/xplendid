@@ -59,7 +59,7 @@ class RAG:
         return [self.hf_client.feature_extraction(text = t) for t in texts]
         
 
-    # A fmethod to load the collection into Milvus
+    # A method to load the collection into Milvus
     def load_collection(self) -> None:
         # Getting embeddings and data
         embeddings = self.get_embeddings()
@@ -91,7 +91,7 @@ class RAG:
         collection.load()
 
 
-    # A function to get the retriever
+    # A method to get the retriever
     def get_retriever(self) -> VectorStoreRetriever:
         # Connecting to Milvus
         self.connect_to_milvus

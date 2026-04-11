@@ -14,3 +14,4 @@
 - [ ] Refine the AI Assistant Prompt
 - [ ] Perform unit tests
 - [ ] Add Bayesian features
+- [ ] Add retrials logic to loop through all the models
