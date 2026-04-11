@@ -14,7 +14,7 @@ class RAG:
         self.hf_token, self.model = load_credentials('embeddings')
         self.hf_client = InferenceClient(token = self.hf_token, model = self.model)
         self.milvus_uri, self.milvus_token = load_credentials('milvus')
-        self.connect_to_milvus = connections.connect(alias = 'default', uri = self.milvus_uri, token = self.milvus_token)
+        connections.connect(alias = 'default', uri = self.milvus_uri, token = self.milvus_token)
         self.collection_name = 'xplendid_collection'
 
 
@@ -65,9 +65,6 @@ class RAG:
         embeddings = self.get_embeddings()
         data = self.load_data()
 
-        # Connecting to Milvus
-        self.connect_to_milvus
-
         # Setting up the collection schema
         fields = [
         FieldSchema(name = 'id', dtype = DataType.INT64, is_primary = True, auto_id = True),
@@ -93,8 +90,7 @@ class RAG:
 
     # A function to get the retriever
     def get_retriever(self) -> VectorStoreRetriever:
-        # Connecting to Milvus
-        self.connect_to_milvus
+        # Loading the collection
         collection = Collection(self.collection_name)
         collection.load()
     
