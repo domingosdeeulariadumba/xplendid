@@ -88,7 +88,7 @@ class RAG:
         collection.load()
 
 
-    # A function to get the retriever
+    # A method to get the retriever
     def get_retriever(self) -> VectorStoreRetriever:
         # Loading the collection
         collection = Collection(self.collection_name)
@@ -104,3 +104,9 @@ class RAG:
         )
         vector_store_retriever = vectorstore.as_retriever(search_type = 'similarity', search_kwargs = {'k': 3})
         return vector_store_retriever
+    
+# Initializing retriever at the module level to avoid reloading the collection on every query
+def _init_retriever() -> VectorStoreRetriever:
+    rag_ = RAG()
+    return rag_.get_retriever()
+retriever = _init_retriever()
