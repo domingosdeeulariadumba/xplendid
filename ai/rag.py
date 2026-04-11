@@ -93,16 +93,17 @@ class RAG:
 
     # A function to get the retriever
     def get_retriever(self) -> VectorStoreRetriever:
-        # Connecting to Milvus
-        #self.connect_to_milvus
-        #collection = Collection(self.collection_name)
-        #collection.load()
+        connections.connect(
+                    alias = 'default',
+                    uri = self.milvus_uri,
+                    token = self.milvus_token
+                    )
     
         # Initializing the Milvus vector store and retriever
         vectorstore = Milvus(
         collection_name = self.collection_name,
         embedding_function = self,
-        connection_args = {'uri': self.milvus_uri, 'token': self.milvus_token, 'alias': 'xplendid'},
+        connection_args = {'uri': self.milvus_uri, 'token': self.milvus_token},
         vector_field = 'embedding',
         text_field = 'answer'
         )
