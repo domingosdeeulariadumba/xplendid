@@ -100,8 +100,9 @@ with st.expander('Planeie o seu experimento ↴'):
             min_sample_size = ab_test_design.get_sample_size()
             
             # A apresentar a informação relativa ao tamanho amostral
-            if isinstance(min_sample_size, int): 
-                msg_design = st.secrets['summary']['design']['pt'].format(min_sample_size)
+            if isinstance(min_sample_size, int):
+                formatted = f'{min_sample_size:,}'.replace(',', '.')
+                msg_design = st.secrets['summary']['design']['pt'].format(formatted)
                 st.write('')
                 st.write_stream(
                     stream_design_recommendation(
