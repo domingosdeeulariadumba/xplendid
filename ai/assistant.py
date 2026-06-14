@@ -54,7 +54,7 @@ def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:
     ai_exception = ai_exceptions(lang)
     messages = [{'role': 'system', 'content': prompt}] + session_state.chat_history
       
-    # Attempt to get response throught the xplendid agent
+    # Attempt to get response through the xplendid agent
     for api_key, base_url, model in credentials: 
         try:
             chat_model = init_chat_model(model = model, api_key = api_key, base_url = base_url)

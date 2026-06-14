@@ -4,7 +4,9 @@ from ai.rag import retriever
 from langchain_core.tools import Tool
 
 
-# RAG retriever
+# RAG retriever (cached for 7 days to optimize performance)
+ttl = 7 * 24 * 60 * 60  # 7 days in seconds
+@st.cache_data(ttl = ttl, show_spinner = False)
 def fetch_answers(query: str) -> str:
     '''Fetch answers from xplendid's knowledge base'''
     docs = retriever.invoke(query)
