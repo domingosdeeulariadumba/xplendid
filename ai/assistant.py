@@ -55,9 +55,12 @@ def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:
     messages = [{'role': 'system', 'content': prompt}] + session_state.chat_history
       
     # Attempt to get response through the xplendid agent
-    for api_key, base_url, model in credentials: 
+    for api_key, base_url, model, model_provider in credentials: 
         try:
-            chat_model = init_chat_model(model = model, api_key = api_key, base_url = base_url)
+            chat_model = init_chat_model(
+                 model = model, api_key = api_key, 
+                 base_url = base_url, model_provider = model_provider
+                 )
             xplendid_agent = create_agent(model = chat_model, tools = tools)
             completions = xplendid_agent.invoke({'messages': messages})
             response = completions['messages'][-1].content
@@ -66,6 +69,6 @@ def ask_xplendid(session_state: list[dict[str, str]], lang: str = 'en') -> str:
                 return ai_exception[0]
         except APIConnectionError:
                continue
-        except:
-             return ai_exception[-1]        
+        except Exception as e:
+             return f'Error: {e}'        
     return ai_exception[1]

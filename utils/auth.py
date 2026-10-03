@@ -7,10 +7,10 @@ from utils.exceptions import ai_exceptions
 # Function for loading AI-related credentials
 def load_credentials(api: str = 'llm') -> Iterator[tuple[str, str, str]] | tuple[str, str, str]: 
     if api == 'llm':
-        api_keys, base_urls, models = tuple(
-            [st.secrets['llm'][i] for i in ['keys','base_urls','models']]
+        api_keys, base_urls, models, model_providers = tuple(
+            [st.secrets['llm'][i] for i in ['keys','base_urls','models', 'model_providers']]
         )
-        return zip(api_keys, base_urls, models)
+        return zip(api_keys, base_urls, models, model_providers)
     elif api == 'milvus':
          return tuple(st.secrets['milvus'].values())
     else:
