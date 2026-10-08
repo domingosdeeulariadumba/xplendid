@@ -39,7 +39,7 @@ class RAG:
         if (embeddings_ctime == 2e-10 or ((today > last_update) and (today.day == 7))):
             # Initializing the inference client and getting embeddings
             embeddings = [
-                self.inference_client.encode(item['answer'])
+                self.inference_client.encode(item['answer'], convert_to_numpy = True, normalize_embeddings = True)
                 for item in data
                 ]
             jbl.dump(embeddings, embeddings_path)
@@ -55,7 +55,7 @@ class RAG:
 
     # Method to get embeddings for documents
     def embed_documents(self, texts: list[str]) -> list[np.ndarray[float]]:
-        return [self.inference_client.encode(t) for t in texts]
+        return [self.inference_client.encode(t, convert_to_numpy = True, normalize_embeddings = True) for t in texts]
         
 
     # A method to load the collection into Milvus
