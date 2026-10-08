@@ -1,7 +1,7 @@
 # Dependencies
 from langchain_milvus import Milvus
 from utils.auth import load_credentials
-from huggingface_hub import InferenceClient
+from sentence_transformers import SentenceTransformer
 import os, json, datetime, numpy as np, joblib as jbl
 from langchain_core.vectorstores import VectorStoreRetriever
 from pymilvus import connections, Collection, FieldSchema, DataType, CollectionSchema
@@ -11,8 +11,8 @@ from pymilvus import connections, Collection, FieldSchema, DataType, CollectionS
 # A class for managing embeddings and retrieval
 class RAG:
     def __init__(self):
-        self.hf_token, self.model = load_credentials('embeddings')
-        self.hf_client = InferenceClient(token = self.hf_token, model = self.model)
+        self.inference_model = load_credentials('embeddings')
+        self.inference_client = SentenceTransformer(self.inference_model)
         self.milvus_uri, self.milvus_token = load_credentials('milvus')
         self.connect_to_milvus = connections.connect(alias = 'default', uri = self.milvus_uri, token = self.milvus_token)
         self.collection_name = 'xplendid_collection'
@@ -38,9 +38,8 @@ class RAG:
         
         if (embeddings_ctime == 2e-10 or ((today > last_update) and (today.day == 7))):
             # Initializing the inference client and getting embeddings
-            client = self.hf_client
             embeddings = [
-                client.feature_extraction(text = item['answer'])
+                self.inference_client.encode(item['answer'])
                 for item in data
                 ]
             jbl.dump(embeddings, embeddings_path)
@@ -51,12 +50,12 @@ class RAG:
 
     # Method to get the embedding for a query
     def embed_query(self, text: str) -> np.ndarray[float]:
-        return self.hf_client.feature_extraction(text = text)
+        return self.inference_client.encode(text, convert_to_numpy = True, normalize_embeddings = True)
     
 
     # Method to get embeddings for documents
     def embed_documents(self, texts: list[str]) -> list[np.ndarray[float]]:
-        return [self.hf_client.feature_extraction(text = t) for t in texts]
+        return [self.inference_client.encode(t) for t in texts]
         
 
     # A method to load the collection into Milvus
